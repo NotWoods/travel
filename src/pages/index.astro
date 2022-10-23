@@ -1,6 +1,5 @@
 ---
 import BaseHead from "../components/BaseHead.astro";
-import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import HomeCard from "../components/HomeCard.astro";
 import HomeLine from "../components/HomeLine.astro";
@@ -16,34 +15,41 @@ import Squiggle from "../components/Squiggle.astro";
     />
   </head>
   <body class="bg-[#bdbabf]">
-    <Header />
-    <main>
-      <section class="home-cards grid m-2">
-        <a
-          class="text-center relative p-12 row-span-6 text-white text-shadow shadow-black/50 squiggle-0 hover:squiggle-1 hover:text-orange-600"
-          href="/travel-guides/hawaii"
+    <header class="m-3 mb-5 md:mb-20 flex">
+      <h1 class="font-headings flex-1 font-normal text-xl font-extracondensed">
+        Tiger x Daphne's <span class="text-orange-700 font-semibold"
+          >Travels</span
         >
-          <h2 class="inline-block text-5xl font-ultracondensed relative z-10">
-            Hawai'i<br />Islands
-            <Squiggle
-              class="absolute -bottom-10 -left-4 -right-8 text-black -z-1"
-            />
-          </h2>
-          <img
-            class="bg-black/30 absolute inset-0 w-full h-full object-cover object-top"
-            src="/images/big_island_old_airport.jpg"
+      </h1>
+    </header>
+    <main class="grid m-2">
+      <a
+        class="hero-card text-center relative p-8 mb-5 md:mr-10 md:mt-14 md:mb-20 text-white text-shadow shadow-black/50 squiggle-0 hover:squiggle-1 hover:text-orange-600"
+        href="/travel-guides/hawaii"
+      >
+        <h2
+          class="inline-block text-3xl sm:text-5xl font-ultracondensed relative z-10"
+        >
+          Hawai'i <br class="hidden sm:inline" />Islands
+          <Squiggle
+            class="absolute -bottom-10 -left-4 -right-8 text-black -z-1"
           />
-        </a>
-
+        </h2>
+        <img
+          class="bg-black/30 absolute inset-0 w-full h-full object-cover object-top"
+          src="/images/big_island_old_airport.jpg"
+        />
+      </a>
+      <section class="home-cards grid">
         <HomeLine class="row-start-1" />
         <HomeCard
-          class="row-start-2 col-start-2"
+          class="row-start-2 col-start-1"
           title="Oahu"
           href="/travel-guides/oahu-hawaii"
           src="/images/oahu_honolulu.jpg"
         />
         <HomeCard
-          class="row-start-2 col-start-3 col-span-2"
+          class="row-start-2 col-start-2 col-span-2"
           title="Big Island"
           href="/travel-guides/big-island-hawaii"
           src="/images/big_island_polulu_valley.jpg"
@@ -51,19 +57,39 @@ import Squiggle from "../components/Squiggle.astro";
 
         <HomeLine class="row-start-3" />
         <HomeCard
-          class="row-start-4 col-start-2"
+          class="row-start-4 col-start-1"
           title="East Coast, USA"
           href="/travel-guides/east-coast-usa"
           src="/images/ny_brooklyn_bridge.jpg"
         />
+
+        <HomeLine class="row-start-5" />
       </section>
     </main>
     <Footer />
     <style>
+      main {
+        grid-template: 40vw 1fr / 1fr;
+      }
       .home-cards {
-        grid-template-columns: 40vw repeat(3, 220px) auto;
-        column-gap: 2rem;
-        grid-auto-rows: 1px 300px;
+        --card-height: min(35vw, 300px);
+        grid-template-columns:
+          repeat(3, calc(var(--card-height) * 0.75))
+          auto;
+        column-gap: min(2vw, 2rem);
+        grid-auto-rows: 1px var(--card-height);
+      }
+      @media (min-width: 768px) {
+        main {
+          grid-template: 1fr / 40vw 1fr;
+        }
+        .hero-card {
+          min-height: 40vw;
+        }
+        .home-cards {
+          --card-height: min(20vw, 300px);
+          column-gap: min(2vw, 2rem);
+        }
       }
     </style>
   </body>

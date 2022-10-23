@@ -1,7 +1,7 @@
 ---
 layout: "../../layouts/TravelGuide.astro"
-title: "Oahu, Hawaii"
-pubDate: 2022-10-22
+title: "Big Island, Hawaii"
+pubDate: 2022-10-23
 ---
 
 [https://onedayitinerary.com/one-day-in-honolulu-itinerary/](https://onedayitinerary.com/one-day-in-honolulu-itinerary/)

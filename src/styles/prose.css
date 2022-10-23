@@ -2,7 +2,7 @@ p {
   @apply my-0.5;
 }
 
-a {
+a:not([class]) {
   @apply underline underline-offset-2 decoration-zinc-900/40;
 }
 a:hover {

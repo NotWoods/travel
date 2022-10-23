@@ -6,7 +6,10 @@ export interface Props {
 
 const { pubDate, updatedDate } = Astro.props;
 
-const formatter = new Intl.DateTimeFormat("en-US", { dateStyle: "long" });
+const formatter = new Intl.DateTimeFormat("en-US", {
+  dateStyle: "long",
+  timeZone: "UTC",
+});
 
 function toIsoDate(date: Date) {
   const [isoDate] = date.toISOString().split("T");
