@@ -1,3 +1,7 @@
+p {
+  @apply my-0.5;
+}
+
 a {
   @apply underline underline-offset-2 decoration-zinc-900/40;
 }
@@ -5,11 +9,22 @@ a:hover {
   @apply no-underline;
 }
 
+ul {
+  @apply list-disc pl-5 ml-0.5;
+}
+ul ul {
+  @apply ml-0;
+}
+
 li {
   @apply pl-0.5 my-0.5;
 }
-li > input[type="checkbox"] {
-  @apply w-4 h-4 mr-0.5;
+li.task-list-item {
+  @apply list-none;
+}
+li.task-list-item > input[type="checkbox"] {
+  @apply w-4 h-4;
+  margin-left: -1.25rem;
 }
 
 h2 {

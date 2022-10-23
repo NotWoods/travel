@@ -4,6 +4,7 @@ import BaseHead from "../components/BaseHead.astro";
 import Header from "../components/Header.astro";
 import Time from "../components/Time.astro";
 import Footer from "../components/Footer.astro";
+import Squiggle from "../components/Squiggle.astro";
 
 export interface Props {
   content: {
@@ -30,7 +31,10 @@ const {
 
     <article class="max-w-3xl mx-auto">
       <header class="pb-2">
-        <h1 class="text-5xl">{title}</h1>
+        <h1 class="text-5xl inline-block relative">
+          {title}
+          <Squiggle class="absolute -top-16 -left-12 text-[#fd5036] z-[-1]" />
+        </h1>
         <div class="py-2 px-1.5 border-b border-zinc-900/40">
           <Time {pubDate} {updatedDate} />
         </div>
