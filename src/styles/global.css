@@ -14,3 +14,23 @@ h6 {
   font-weight: 500;
   font-variation-settings: "GRAD" -50;
 }
+
+.font-ultracondensed {
+  font-stretch: ultra-condensed;
+}
+.-z-1 {
+  z-index: -1;
+}
+.squiggle-0 {
+  --squiggle-length: 0;
+}
+.hover\:squiggle-1:hover {
+  --squiggle-length: 1;
+}
+
+.text-shadow-sm {
+  text-shadow: 1px 1px 1px var(--tw-shadow-color);
+}
+.text-shadow {
+  text-shadow: 1px 1px 5px var(--tw-shadow-color);
+}

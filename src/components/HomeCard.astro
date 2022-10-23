@@ -1,0 +1,28 @@
+---
+import Squiggle from "./Squiggle.astro";
+
+export interface Props {
+  title: string;
+  href: string;
+  class?: string;
+  src?: string;
+}
+
+const { title, href, src, class: className } = Astro.props;
+---
+
+<a
+  href={href}
+  class={`card flex flex-col py-2 squiggle-0 hover:squiggle-1 hover:text-orange-600 ${className}`}
+>
+  <h2
+    class="text-3xl font-ultracondensed mb-1 whitespace-nowrap transition-colors relative self-start text-shadow-sm shadow-black/30 z-10"
+  >
+    {title}
+    <Squiggle class="absolute -top-2 -left-4 -right-4 text-white -z-1" />
+  </h2>
+  <img
+    class="flex-1 bg-black/30 object-cover h-full shadow-sm shadow-black/30"
+    src={src}
+  />
+</a>

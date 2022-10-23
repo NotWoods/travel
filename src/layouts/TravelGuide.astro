@@ -31,9 +31,14 @@ const {
 
     <article class="max-w-3xl mx-auto">
       <header class="pb-2 mb-8">
-        <h1 class="text-5xl inline-block relative">
+        <h1
+          class="text-5xl inline-block relative font-ultracondensed text-shadow-sm shadow-black/30"
+        >
           {title}
-          <Squiggle class="absolute -top-10 -left-12 text-[#f97763] z-[-1]" />
+          <Squiggle
+            autoAnimate
+            class="absolute -top-10 -left-12 text-orange-500 -z-1"
+          />
         </h1>
         <div class="text-lg py-2 px-1.5 border-b border-zinc-900/40">
           <Time {pubDate} {updatedDate} />
@@ -42,10 +47,5 @@ const {
       <slot />
     </article>
     <Footer />
-    <style>
-      h1 {
-        font-stretch: ultra-condensed;
-      }
-    </style>
   </body>
 </html>

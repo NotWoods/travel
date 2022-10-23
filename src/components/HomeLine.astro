@@ -1,0 +1,15 @@
+---
+export interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<hr class={`col-start-2 border-zinc-900 ${className}`} />
+
+<style>
+  hr {
+    grid-column-end: -1;
+  }
+</style>

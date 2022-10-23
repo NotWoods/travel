@@ -43,7 +43,6 @@ pubDate: 2022-10-22
 - [ ] Pearl Harbor
   - Pearl Harbor National Memorial’s USS Arizona Memorial Program ticket - [book](https://www.recreation.gov/ticket/233338/ticket/16) the day before at 3:00 pm
 - [ ] Pearl Harbor Historic Sites Visitor Center
-- Pearl Harbor Historic Sites Visitor Center
 - [ ] Pearl Harbor Aviation Museum
   - Pearl Harbor Aviation Museum - [book](https://tickets.pearlharborhistoricsites.org/webstore/shop/viewItems.aspx?cg=phhs&c=pham) the day before
 - [ ] Helena's Hawaiian Food (cash only - **go at 10am or 3pm**)
