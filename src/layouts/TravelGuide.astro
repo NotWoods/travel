@@ -1,0 +1,42 @@
+---
+import "../styles/prose.css";
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import Time from "../components/Time.astro";
+import Footer from "../components/Footer.astro";
+
+export interface Props {
+  content: {
+    title: string;
+    description: string;
+    pubDate?: string;
+    updatedDate?: string;
+    heroImage?: string;
+  };
+}
+
+const {
+  content: { title, description, pubDate, updatedDate, heroImage },
+} = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <BaseHead title={title} description={description} />
+  </head>
+
+  <body>
+    <Header />
+
+    <article class="max-w-3xl mx-auto">
+      <header class="pb-2">
+        <h1 class="text-5xl">{title}</h1>
+        <div class="py-2 px-1.5 border-b border-zinc-900/40">
+          <Time {pubDate} {updatedDate} />
+        </div>
+      </header>
+      <slot />
+    </article>
+    <Footer />
+  </body>
+</html>

@@ -1,0 +1,20 @@
+---
+export interface Props {
+  pubDate?: string;
+  updatedDate?: string;
+}
+
+const { pubDate, updatedDate } = Astro.props;
+---
+
+{
+  updatedDate ? (
+    <div>
+      Last updated on <time>{updatedDate}</time>
+    </div>
+  ) : pubDate ? (
+    <div>
+      Written on <time>{pubDate}</time>
+    </div>
+  ) : null
+}

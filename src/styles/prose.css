@@ -1,0 +1,20 @@
+a {
+  @apply underline underline-offset-2 decoration-zinc-900/40;
+}
+a:hover {
+  @apply no-underline;
+}
+
+li {
+  @apply pl-0.5 my-0.5;
+}
+li > input[type="checkbox"] {
+  @apply w-4 h-4 mr-0.5;
+}
+
+h2 {
+  @apply mt-8 mb-1 text-3xl;
+}
+h3 {
+  @apply mt-6 mb-0.5 text-2xl;
+}
