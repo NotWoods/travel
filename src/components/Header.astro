@@ -1,26 +1,5 @@
----
-import HeaderLink from "./HeaderLink.astro";
----
-
-<header>
-  <h2>My personal website</h2>
-  <nav>
-    <HeaderLink href="/">Home</HeaderLink>
-    <HeaderLink href="/blog">Blog</HeaderLink>
-    <HeaderLink href="/about">About</HeaderLink>
-    <HeaderLink href="https://twitter.com/astrodotbuild" target="_blank"
-      >Twitter</HeaderLink
-    >
-    <HeaderLink href="https://github.com/withastro/astro" target="_blank"
-      >GitHub</HeaderLink
-    >
-  </nav>
+<header class="m-3 mb-20 pt-1 border-t-2 border-zinc-900 flex">
+  <h1 class="flex-1 font-normal">
+    Tiger x Daphne <span class="text-[#f42607] font-medium">Travel</span>
+  </h1>
 </header>
-<style>
-  header {
-    margin: 0em 0 2em;
-  }
-  h2 {
-    margin: 0.5em 0;
-  }
-</style>

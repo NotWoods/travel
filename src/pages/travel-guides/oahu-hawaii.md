@@ -2,7 +2,7 @@
 layout: "../../layouts/TravelGuide.astro"
 title: "Oahu, Hawaii"
 description: "Lorem ipsum dolor sit amet"
-pubDate: "Jul 08 2022"
+pubDate: 2022-10-22
 ---
 
 [https://onedayitinerary.com/one-day-in-honolulu-itinerary/](https://onedayitinerary.com/one-day-in-honolulu-itinerary/)

@@ -5,16 +5,29 @@ export interface Props {
 }
 
 const { pubDate, updatedDate } = Astro.props;
+
+const formatter = new Intl.DateTimeFormat("en-US", { dateStyle: "long" });
+
+function toIsoDate(date: Date) {
+  const [isoDate] = date.toISOString().split("T");
+  return isoDate;
+}
+
+let text = "Written on ";
+let date: Date | undefined;
+if (updatedDate) {
+  text = "Updated on ";
+  date = new Date(updatedDate);
+} else if (pubDate) {
+  date = new Date(pubDate);
+}
 ---
 
 {
-  updatedDate ? (
+  date && (
     <div>
-      Last updated on <time>{updatedDate}</time>
+      {text}
+      <time datetime={toIsoDate(date)}>{formatter.format(date)}</time>
     </div>
-  ) : pubDate ? (
-    <div>
-      Written on <time>{pubDate}</time>
-    </div>
-  ) : null
+  )
 }

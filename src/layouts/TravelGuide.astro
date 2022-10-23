@@ -30,17 +30,22 @@ const {
     <Header />
 
     <article class="max-w-3xl mx-auto">
-      <header class="pb-2">
+      <header class="pb-2 mb-8">
         <h1 class="text-5xl inline-block relative">
           {title}
-          <Squiggle class="absolute -top-16 -left-12 text-[#fd5036] z-[-1]" />
+          <Squiggle class="absolute -top-10 -left-12 text-[#f97763] z-[-1]" />
         </h1>
-        <div class="py-2 px-1.5 border-b border-zinc-900/40">
+        <div class="text-lg py-2 px-1.5 border-b border-zinc-900/40">
           <Time {pubDate} {updatedDate} />
         </div>
       </header>
       <slot />
     </article>
     <Footer />
+    <style>
+      h1 {
+        font-stretch: ultra-condensed;
+      }
+    </style>
   </body>
 </html>
