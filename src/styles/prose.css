@@ -2,6 +2,9 @@ p {
   @apply my-0.5;
 }
 
+a {
+  @apply underline-offset-2 decoration-zinc-900/40;
+}
 a:not([class]) {
   @apply underline underline-offset-2 decoration-zinc-900/40;
 }

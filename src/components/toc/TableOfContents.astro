@@ -1,0 +1,50 @@
+---
+import TableOfContentsList from "./TableOfContentsList.astro";
+import type { MutableTreeNode, TreeNode } from "./tree-node";
+
+export interface Props {
+  headers: readonly {
+    depth: number;
+    slug: string;
+    text: string;
+  }[];
+}
+
+const { headers } = Astro.props as Props;
+
+function asTree(): readonly TreeNode[] {
+  const tree: MutableTreeNode[] = [];
+  const lastAtDepths = new Map<number, MutableTreeNode>();
+
+  for (const header of headers) {
+    const parent = lastAtDepths.get(header.depth - 1);
+    const node: MutableTreeNode = {
+      children: [],
+      slug: header.slug,
+      text: header.text,
+    };
+
+    if (parent) {
+      parent.children.push(node);
+    } else {
+      tree.push(node);
+    }
+
+    lastAtDepths.set(header.depth, node);
+  }
+  return tree;
+}
+---
+
+<nav>
+  <h2 class="font-ultracondensed text-xl">Table of contents</h2>
+  <div class="grow overflow-y-auto pb-4 -ml-5 text-zinc-800">
+    <TableOfContentsList tree={asTree()} />
+  </div>
+</nav>
+
+<style>
+  nav {
+    grid-area: toc;
+  }
+</style>

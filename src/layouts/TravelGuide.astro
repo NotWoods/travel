@@ -5,6 +5,7 @@ import Header from "../components/Header.astro";
 import Time from "../components/Time.astro";
 import Footer from "../components/Footer.astro";
 import Squiggle from "../components/Squiggle.astro";
+import TableOfContents from "../components/toc/TableOfContents.astro";
 
 export interface Props {
   content: {
@@ -17,6 +18,7 @@ export interface Props {
 
 const {
   content: { title, description, pubDate, updatedDate },
+  headings,
 } = Astro.props;
 ---
 
@@ -28,7 +30,7 @@ const {
   <body>
     <Header />
 
-    <article class="max-w-3xl mx-auto px-4">
+    <article class="mx-auto px-4">
       <header class="pb-2 mb-8">
         <h1
           class="text-5xl inline-block relative font-ultracondensed text-shadow-sm shadow-black/30"
@@ -43,8 +45,30 @@ const {
           <Time pubDate={pubDate} updatedDate={updatedDate} />
         </div>
       </header>
-      <slot />
+      <TableOfContents headers={headings} />
+      <div class="prose max-w-3xl">
+        <slot />
+      </div>
     </article>
     <Footer />
+    <style>
+      @media (min-width: 768px) {
+        article {
+          display: grid;
+          column-gap: 2rem;
+          grid-template:
+            ". header" auto
+            "toc content" auto
+            / 300px fit-content(48rem);
+        }
+
+        header {
+          grid-area: header;
+        }
+        .prose {
+          grid-area: content;
+        }
+      }
+    </style>
   </body>
 </html>

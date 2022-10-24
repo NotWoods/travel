@@ -1,0 +1,26 @@
+---
+import type { TreeNode } from "./tree-node";
+
+export interface Props {
+  tree: readonly TreeNode[];
+}
+
+const { tree } = Astro.props as Props;
+
+const Self =
+  tree.some((node) => node.children.length > 0) &&
+  (await import("./TableOfContentsList.astro")).default;
+---
+
+<ul id="table-of-contents" class="">
+  {
+    tree.map((node) => (
+      <li class="list-none">
+        <a class="block underline" href={`#${node.slug}`}>
+          {node.text}
+        </a>
+        {node.children.length > 0 && <Self tree={node.children} />}
+      </li>
+    ))
+  }
+</ul>
