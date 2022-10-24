@@ -33,3 +33,21 @@ h2 {
 h3 {
   @apply mt-6 mb-0.5 text-2xl;
 }
+
+mark {
+  @apply bg-yellow-200/70;
+}
+
+table {
+  @apply -mx-3;
+}
+thead {
+  @apply text-left bg-zinc-100/30;
+}
+th {
+  @apply font-normal;
+}
+th,
+td {
+  @apply border border-zinc-100/70 p-2;
+}
