@@ -24,7 +24,10 @@ const {
 
 <html lang="en">
   <head>
-    <BaseHead title={title} description={description} />
+    <BaseHead
+      title={`${title} travel guide from Tiger x Daphne`}
+      description={description}
+    />
   </head>
 
   <body>
@@ -46,7 +49,7 @@ const {
         </div>
       </header>
       <TableOfContents headers={headings} />
-      <div class="prose max-w-3xl">
+      <div class="prose">
         <slot />
       </div>
     </article>
