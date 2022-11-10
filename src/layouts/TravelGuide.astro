@@ -41,12 +41,10 @@ const {
           {title}
           <Squiggle
             autoAnimate
-            class="absolute -top-10 -left-12 text-orange-500 -z-1"
+            class="absolute -top-10 -left-12 max-w-xs text-orange-500 -z-1"
           />
         </h1>
-        <div class="text-lg py-2 px-1.5 border-b border-zinc-900/40">
-          <Time pubDate={pubDate} updatedDate={updatedDate} />
-        </div>
+        <div class="text-lg py-2 px-1.5 border-b border-zinc-900/40"></div>
       </header>
       <TableOfContents headers={headings} />
       <div class="prose">

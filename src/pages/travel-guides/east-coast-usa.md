@@ -1,10 +1,8 @@
 ---
 layout: "../../layouts/TravelGuide.astro"
-title: "East Coast, USA"
+title: "East Coast USA"
 pubDate: 2022-03-09
 ---
-
-## Agenda
 
 North to south:
 
@@ -61,7 +59,7 @@ North to south:
 - Middlesex Fells Reservation (free, 50 mins bus, paid boat rentals)
 - JFK Library and Museum
 
-### Not doing
+### Didn't do
 
 - Mapparium (closed)
 - Prudential Center @(closed)
