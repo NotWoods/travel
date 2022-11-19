@@ -1,19 +1,44 @@
 ---
+import Image from "@11ty/eleventy-img";
 import Squiggle from "./Squiggle.astro";
 
 export interface Props {
   title: string;
   href: string;
+  wide?: boolean;
   class?: string;
   src?: string;
+  alt?: string;
 }
 
-const { title, href, src, class: className } = Astro.props;
+const { title, href, src, alt, wide, class: className } = Astro.props;
+
+const stats = await Image(`public${src}`, {
+  formats: ["webp"],
+  outputDir: `${import.meta.env.PROD ? "dist" : "public"}/assets/images`,
+  urlPath: "/assets/images",
+  widths: [100, 150, 200, 300, 400, 600, 800, null].filter((num) => {
+    if (typeof num === "number" && wide) {
+      return num * 2;
+    }
+    return num;
+  }),
+});
+
+const srcset = stats.webp.map(({ width, url }) => `${url} ${width}w`);
+srcset.push(src);
 ---
 
 <a
   href={href}
-  class={`card flex flex-col py-2 squiggle-0 hover:squiggle-1 hover:text-orange-600 ${className}`}
+  class={[
+    "card flex flex-col py-2 squiggle-0",
+    "hover:squiggle-1 hover:text-orange-600",
+    wide ? "col-span-2" : "",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ")}
 >
   <h2
     class="text-xl sm:text-3xl font-ultracondensed mb-1 whitespace-nowrap transition-colors relative self-start text-shadow-sm shadow-black/30 z-10"
@@ -24,5 +49,7 @@ const { title, href, src, class: className } = Astro.props;
   <img
     class="flex-1 bg-black/30 object-cover overflow-hidden h-full shadow-sm shadow-black/30"
     src={src}
+    srcset={srcset.join(", ")}
+    alt={alt}
   />
 </a>

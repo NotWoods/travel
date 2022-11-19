@@ -11,6 +11,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@11ty/eleventy-img": "^2.0.1",
     "@astrojs/mdx": "^0.11.4",
     "@astrojs/tailwind": "^2.1.1",
     "@types/canvas-confetti": "^1.4.3",
@@ -22,6 +23,8 @@
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.7",
+    "@types/11ty__eleventy-img": "^2.0.1",
+    "@types/node": "^18.11.9",
     "prettier": "^2.7.1",
     "prettier-plugin-astro": "^0.6.0"
   }
