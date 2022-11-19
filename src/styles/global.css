@@ -27,11 +27,13 @@ h6 {
 .-z-1 {
   z-index: -1;
 }
-.squiggle-0 {
+.hover\:squiggle .squiggle__path {
   --squiggle-length: 0;
+  visibility: hidden;
 }
-.hover\:squiggle-1:hover {
+.hover\:squiggle:hover .squiggle__path {
   --squiggle-length: 1;
+  visibility: visible;
 }
 
 .text-shadow-sm {
