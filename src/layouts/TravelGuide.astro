@@ -5,7 +5,11 @@ import Header from "../components/Header.astro";
 import Time from "../components/Time.astro";
 import Footer from "../components/Footer.astro";
 import Squiggle from "../components/Squiggle.astro";
-import TableOfContents from "../components/toc/TableOfContents.astro";
+import TableOfContents, {
+  asTree,
+  Header as TocHeader,
+} from "../components/toc/TableOfContents.astro";
+import { TreeNode } from "../components/toc/tree-node";
 
 export interface Props {
   content: {
@@ -14,11 +18,14 @@ export interface Props {
     pubDate?: string;
     updatedDate?: string;
   };
+  headings?: readonly TocHeader[];
+  headerTree?: readonly TreeNode[];
 }
 
 const {
   content: { title, description, pubDate, updatedDate },
   headings,
+  headerTree,
 } = Astro.props;
 ---
 
@@ -47,7 +54,7 @@ const {
         </h1>
         <div class="text-lg py-2 px-1.5 border-b border-zinc-900/40"></div>
       </header>
-      <TableOfContents headers={headings} />
+      <TableOfContents tree={headings ? asTree(headings) : headerTree} />
       <div class="prose">
         <slot />
       </div>

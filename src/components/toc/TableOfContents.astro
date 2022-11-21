@@ -2,17 +2,19 @@
 import TableOfContentsList from "./TableOfContentsList.astro";
 import type { MutableTreeNode, TreeNode } from "./tree-node";
 
-export interface Props {
-  headers: readonly {
-    depth: number;
-    slug: string;
-    text: string;
-  }[];
+export interface Header {
+  depth: number;
+  slug: string;
+  text: string;
 }
 
-const { headers } = Astro.props as Props;
+export interface Props {
+  tree: readonly TreeNode[];
+}
 
-function asTree(): readonly TreeNode[] {
+const { tree } = Astro.props as Props;
+
+export function asTree(headers: readonly Header[]): readonly TreeNode[] {
   const tree: MutableTreeNode[] = [];
   const lastAtDepths = new Map<number, MutableTreeNode>();
 
@@ -39,7 +41,7 @@ function asTree(): readonly TreeNode[] {
 <nav>
   <h2 class="font-ultracondensed text-xl">Table of contents</h2>
   <div class="grow overflow-y-auto pb-4 -ml-5 text-zinc-800">
-    <TableOfContentsList tree={asTree()} />
+    <TableOfContentsList tree={tree} />
   </div>
 </nav>
 

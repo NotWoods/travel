@@ -1,0 +1,81 @@
+---
+import rehypeToc, { HtmlElementNode, ListNode } from "@jsdevtools/rehype-toc";
+import { processor, notion, databaseId, listBlocks } from "../../notion";
+import TravelGuideLayout from "../../layouts/TravelGuide.astro";
+import { TreeNode } from "../../components/toc/tree-node";
+
+export async function getStaticPaths() {
+  const { results } = await notion.databases.query({
+    database_id: databaseId,
+    filter: {
+      property: "Draft",
+      checkbox: {
+        equals: false,
+      },
+    },
+  });
+
+  return results.map((page) => {
+    if (!("properties" in page)) {
+      throw new Error("Got partial data");
+    }
+
+    const urlProperty = page.properties["URL"];
+    if (urlProperty.type !== "rich_text") {
+      throw new Error(`Wrong property type ${urlProperty.type}`);
+    }
+
+    const urlRichText = urlProperty.rich_text;
+    return {
+      params: {
+        slug: urlRichText.map((text) => text.plain_text).join(""),
+      },
+      props: {
+        page,
+      },
+    };
+  });
+}
+
+export type Props = Awaited<ReturnType<typeof getStaticPaths>>[number]["props"];
+const { page } = Astro.props;
+
+const content = {
+  title: page.properties["Name"].title.map((text) => text.plain_text).join(""),
+};
+
+function extractTocHeadings(toc: HtmlElementNode): TreeNode[] {
+  if (toc.tagName !== "nav") {
+    throw new Error(`Expected nav, got ${toc.tagName}`);
+  }
+
+  function listElementToTree(ol: ListNode): TreeNode[] {
+    return ol.children.map((li) => {
+      const [link, subList] = li.children;
+
+      return {
+        text: link.children[0].value,
+        slug: link.properties.href.slice(1),
+        children: subList ? listElementToTree(subList as ListNode) : [],
+      };
+    });
+  }
+
+  return listElementToTree(toc.children[0] as ListNode);
+}
+
+const blocks = await listBlocks(page.id);
+let headerTree: TreeNode[] = [];
+const vFile = await processor()
+  .use(rehypeToc, {
+    customizeTOC(toc) {
+      headerTree = extractTocHeadings(toc);
+      return null;
+    },
+  })
+  .process({ data: blocks });
+---
+
+<TravelGuideLayout content={content} headerTree={headerTree}>
+  <Fragment set:html={vFile.toString()} />
+</TravelGuideLayout>
