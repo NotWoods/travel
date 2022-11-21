@@ -22,7 +22,18 @@ export async function listBlocks(block_id: string) {
   let response = await notion.blocks.children.list({ block_id });
   let blocks: typeof response["results"] = [];
   while (response.results.length > 0) {
-    blocks = blocks.concat(response.results);
+    const responseBlocks = await Promise.all(
+      response.results.map(async (block) => {
+        if ("has_children" in block && block.has_children) {
+          const children = await listBlocks(block.id);
+          block[block.type].children = children;
+        }
+
+        return block;
+      })
+    );
+
+    blocks = blocks.concat(responseBlocks);
 
     if (response.next_cursor) {
       response = await notion.blocks.children.list({

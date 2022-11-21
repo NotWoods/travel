@@ -5,7 +5,7 @@ p {
 a {
   @apply underline-offset-2 decoration-zinc-900/40;
 }
-a:not([class]) {
+.prose a {
   @apply underline underline-offset-2 decoration-zinc-900/40;
 }
 a:hover {
@@ -37,7 +37,8 @@ h3 {
   @apply mt-6 mb-0.5 text-2xl;
 }
 
-mark {
+mark,
+.color-yellow_background {
   @apply bg-yellow-200/70;
 }
 
