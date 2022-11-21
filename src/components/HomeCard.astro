@@ -1,5 +1,5 @@
 ---
-import Image from "@11ty/eleventy-img";
+import Image from "./Image.astro";
 import Squiggle from "./Squiggle.astro";
 
 export interface Props {
@@ -12,20 +12,6 @@ export interface Props {
 }
 
 const { title, href, src, alt, width = 1, style } = Astro.props;
-
-const stats = await Image(`public${src}`, {
-  formats: ["webp"],
-  outputDir: `${import.meta.env.PROD ? "dist" : "public"}/assets/images`,
-  urlPath: "/assets/images",
-  widths: [100, 150, 200, 300, 400, 600, 800, null].map((num) => {
-    if (typeof num === "number") {
-      return num * width;
-    }
-    return num;
-  }),
-});
-
-const srcset = stats.webp.map(({ width, url }) => `${url} ${width}w`);
 ---
 
 <a
@@ -46,10 +32,15 @@ const srcset = stats.webp.map(({ width, url }) => `${url} ${width}w`);
     {title}
     <Squiggle class="absolute -top-2 -left-4 -right-4 text-white -z-1" />
   </h2>
-  <img
+  <Image
     class="flex-1 bg-black/30 object-cover overflow-hidden h-full shadow-sm shadow-black/30"
     src={src}
-    srcset={srcset.join(", ")}
+    widths={[100, 150, 200, 300, 400, 600, 800, null].map((num) => {
+      if (typeof num === "number") {
+        return num * width;
+      }
+      return num;
+    })}
     alt={alt}
   />
 </a>

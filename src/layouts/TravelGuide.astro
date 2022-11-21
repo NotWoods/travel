@@ -10,20 +10,22 @@ import TableOfContents, {
   Header as TocHeader,
 } from "../components/toc/TableOfContents.astro";
 import { TreeNode } from "../components/toc/tree-node";
+import Image from "../components/Image.astro";
 
 export interface Props {
   content: {
     title: string;
-    description: string;
+    description?: string;
     pubDate?: string;
     updatedDate?: string;
+    cover?: string;
   };
   headings?: readonly TocHeader[];
   headerTree?: readonly TreeNode[];
 }
 
 const {
-  content: { title, description, pubDate, updatedDate },
+  content: { title, description = "", cover, pubDate, updatedDate },
   headings,
   headerTree,
 } = Astro.props;
@@ -42,7 +44,7 @@ const {
     <Header />
 
     <article class="mx-auto px-4">
-      <header class="pb-2 mb-8">
+      <header class="pb-2 mb-4">
         <h1
           class="text-5xl inline-block relative font-ultracondensed text-shadow-sm shadow-black/30"
         >
@@ -52,15 +54,37 @@ const {
             class="absolute -top-10 -left-12 max-w-xs text-orange-500 -z-1"
           />
         </h1>
-        <div class="text-lg py-2 px-1.5 border-b border-zinc-900/40"></div>
+        <div class="py-2 border-b border-zinc-900/40"></div>
+        <div
+          class="text-sm py-2 px-1.5 text-right text-shadow shadow-[#d3d1c4]"
+        >
+          <Time pubDate={pubDate} updatedDate={updatedDate} />
+        </div>
       </header>
       <TableOfContents tree={headings ? asTree(headings) : headerTree} />
       <div class="prose">
+        {
+          cover && (
+            <Image
+              class="cover bg-black/30 object-cover overflow-hidden shadow shadow-black/30"
+              widths={[800, 1600, null]}
+              src={cover}
+            />
+          )
+        }
         <slot />
       </div>
     </article>
     <Footer />
     <style>
+      .cover {
+        margin-left: -1rem;
+        margin-right: -1rem;
+        width: calc(100% + 2rem);
+        max-width: initial;
+        height: 30vh;
+      }
+
       @media (min-width: 768px) {
         article {
           display: grid;
@@ -76,6 +100,17 @@ const {
         }
         .prose {
           grid-area: content;
+        }
+        .cover {
+          margin-left: 0;
+          width: calc(100% + 1rem);
+        }
+      }
+
+      @media (min-width: 1084px) {
+        .cover {
+          margin-right: 0;
+          width: 100%;
         }
       }
     </style>

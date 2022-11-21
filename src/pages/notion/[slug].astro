@@ -1,5 +1,9 @@
 ---
-import rehypeToc, { HtmlElementNode, ListNode } from "@jsdevtools/rehype-toc";
+import rehypeToc, {
+  HtmlElementNode,
+  ListNode,
+  TextNode,
+} from "@jsdevtools/rehype-toc";
 import { processor, notion, databaseId, listBlocks } from "../../notion";
 import TravelGuideLayout from "../../layouts/TravelGuide.astro";
 import { TreeNode } from "../../components/toc/tree-node";
@@ -40,8 +44,30 @@ export async function getStaticPaths() {
 export type Props = Awaited<ReturnType<typeof getStaticPaths>>[number]["props"];
 const { page } = Astro.props;
 
+const titleProperty = Object.values(page.properties).find(
+  (
+    property
+  ): property is Extract<
+    Props["page"]["properties"][string],
+    { title: unknown }
+  > => "title" in property
+);
+let cover: string | undefined;
+switch (page.cover.type) {
+  case "external":
+    cover = page.cover.external.url;
+    break;
+  case "file":
+    cover = page.cover.file.url;
+    break;
+}
+console.log(cover, page.cover);
+
 const content = {
-  title: page.properties["Name"].title.map((text) => text.plain_text).join(""),
+  title: titleProperty.title.map((text) => text.plain_text).join(""),
+  cover,
+  pubDate: page.created_time,
+  updatedDate: page.last_edited_time,
 };
 
 function extractTocHeadings(toc: HtmlElementNode): TreeNode[] {
@@ -51,10 +77,11 @@ function extractTocHeadings(toc: HtmlElementNode): TreeNode[] {
 
   function listElementToTree(ol: ListNode): TreeNode[] {
     return ol.children.map((li) => {
-      const [link, subList] = li.children;
+      const [_link, subList] = li.children;
+      const link = _link as HtmlElementNode;
 
       return {
-        text: link.children[0].value,
+        text: (link.children[0] as TextNode).value,
         slug: link.properties.href.slice(1),
         children: subList ? listElementToTree(subList as ListNode) : [],
       };
