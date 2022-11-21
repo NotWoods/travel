@@ -62,22 +62,23 @@ const {
         </div>
       </header>
       <TableOfContents tree={headings ? asTree(headings) : headerTree} />
+      {
+        cover && (
+          <Image
+            class="cover mb-8 bg-black/30 object-cover overflow-hidden shadow shadow-black/30"
+            widths={[800, 1600, null]}
+            src={cover}
+          />
+        )
+      }
       <div class="prose">
-        {
-          cover && (
-            <Image
-              class="cover bg-black/30 object-cover overflow-hidden shadow shadow-black/30"
-              widths={[800, 1600, null]}
-              src={cover}
-            />
-          )
-        }
         <slot />
       </div>
     </article>
     <Footer />
     <style>
       .cover {
+        grid-area: cover;
         margin-left: -1rem;
         margin-right: -1rem;
         width: calc(100% + 2rem);
@@ -90,7 +91,8 @@ const {
           display: grid;
           column-gap: 2rem;
           grid-template:
-            ". header" auto
+            ".   header" auto
+            "toc cover" min-content
             "toc content" auto
             / 300px fit-content(48rem);
         }
@@ -111,6 +113,18 @@ const {
         .cover {
           margin-right: 0;
           width: 100%;
+        }
+      }
+
+      @media (min-width: 1280px) {
+        article {
+          grid-template:
+            ".   header  cover" auto
+            "toc content cover" auto
+            / 300px fit-content(48rem) auto;
+        }
+        .cover {
+          height: auto;
         }
       }
     </style>

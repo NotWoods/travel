@@ -55,3 +55,7 @@ th,
 td {
   @apply border border-zinc-100/70 p-2;
 }
+
+.prose :is(h1, h2, h3, h4, h5, h6):first-child {
+  margin-top: 0;
+}
