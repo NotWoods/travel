@@ -16,7 +16,7 @@ const Self =
   {
     tree.map((node) => (
       <li class="list-none">
-        <a class="block underline" href={`#${node.slug}`}>
+        <a class="block link" href={`#${node.slug}`}>
           {node.text}
         </a>
         {node.children.length > 0 && <Self tree={node.children} />}

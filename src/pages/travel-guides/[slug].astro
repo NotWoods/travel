@@ -61,13 +61,13 @@ switch (page.cover.type) {
     cover = page.cover.file.url;
     break;
 }
-console.log(cover, page.cover);
 
 const content = {
   title: titleProperty.title.map((text) => text.plain_text).join(""),
   cover,
   pubDate: page.created_time,
   updatedDate: page.last_edited_time,
+  notionLink: page.url.replace('https://www.notion.so', 'https://tigeroakes.notion.site')
 };
 
 function extractTocHeadings(toc: HtmlElementNode): TreeNode[] {

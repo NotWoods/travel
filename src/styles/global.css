@@ -42,3 +42,15 @@ h6 {
 .text-shadow {
   text-shadow: 1px 1px 5px var(--tw-shadow-color);
 }
+
+a {
+  @apply underline-offset-2 decoration-zinc-900/40 transition-colors;
+}
+.prose a,
+.link {
+  @apply underline;
+}
+.prose a:hover,
+.link:hover {
+  @apply decoration-zinc-900/0;
+}

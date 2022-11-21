@@ -2,16 +2,6 @@ p {
   @apply my-0.5;
 }
 
-a {
-  @apply underline-offset-2 decoration-zinc-900/40;
-}
-.prose a {
-  @apply underline underline-offset-2 decoration-zinc-900/40;
-}
-a:hover {
-  @apply no-underline;
-}
-
 ul {
   @apply list-disc pl-5 ml-0.5;
 }
