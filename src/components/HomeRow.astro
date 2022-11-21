@@ -1,0 +1,45 @@
+---
+import HomeCard from "./HomeCard.astro";
+
+export interface Card {
+  slug: string;
+  title: string;
+  img: string;
+  width?: 1 | 2 | 3;
+}
+
+export interface Props {
+  row: readonly (Card | undefined)[];
+  index: number;
+}
+
+const { row, index } = Astro.props;
+
+let colCount = 1;
+---
+
+<hr
+  class="col-span-full border-zinc-900"
+  style={`grid-row: ${index * 2 + 1}`}
+/>
+{
+  row.map((card) => {
+    if (!card) {
+      colCount++;
+      return null;
+    }
+
+    const { width = 1 } = card;
+    const style = `grid-row: ${index * 2 + 2}; grid-column-start: ${colCount}`;
+    colCount += width;
+    return (
+      <HomeCard
+        href={`/travel-guides/${card.slug}`}
+        title={card.title}
+        src={card.img}
+        width={width}
+        style={style}
+      />
+    );
+  })
+}

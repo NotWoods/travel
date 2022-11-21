@@ -1,0 +1,46 @@
+---
+import Image from "@11ty/eleventy-img";
+import Squiggle from "./Squiggle.astro";
+
+export interface Props {
+  href: string;
+  src: string;
+  alt?: string;
+}
+
+const { href, src, alt } = Astro.props;
+
+const stats = await Image(`public${src}`, {
+  formats: ["webp"],
+  outputDir: `${import.meta.env.PROD ? "dist" : "public"}/assets/images`,
+  urlPath: "/assets/images",
+  widths: [200, 400, 600, 1000, 1400, null],
+});
+
+const srcset = stats.webp.map(({ width, url }) => `${url} ${width}w`);
+---
+
+<a
+  class="hero-card text-center relative p-8 mb-5 md:mr-10 md:mt-14 md:mb-20 text-white text-shadow shadow-black/50 hover:squiggle hover:text-orange-600"
+  href={href}
+>
+  <h2
+    class="inline-block text-3xl sm:text-5xl font-ultracondensed relative z-10 transition-colors"
+  >
+    <slot />
+    <Squiggle class="absolute -bottom-10 -left-4 -right-8 text-black -z-1" />
+  </h2>
+  <img
+    class="bg-black/30 absolute inset-0 w-full h-full object-cover object-top shadow shadow-black/30"
+    src={src}
+    srcset={srcset.join(", ")}
+    alt={alt}
+  />
+</a>
+<style>
+  @media (min-width: 768px) {
+    .hero-card {
+      min-height: 40vw;
+    }
+  }
+</style>

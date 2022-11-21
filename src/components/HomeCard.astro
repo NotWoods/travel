@@ -5,37 +5,37 @@ import Squiggle from "./Squiggle.astro";
 export interface Props {
   title: string;
   href: string;
-  wide?: boolean;
-  class?: string;
+  width?: 1 | 2 | 3;
   src?: string;
   alt?: string;
+  style?: string;
 }
 
-const { title, href, src, alt, wide, class: className } = Astro.props;
+const { title, href, src, alt, width = 1, style } = Astro.props;
 
 const stats = await Image(`public${src}`, {
   formats: ["webp"],
   outputDir: `${import.meta.env.PROD ? "dist" : "public"}/assets/images`,
   urlPath: "/assets/images",
-  widths: [100, 150, 200, 300, 400, 600, 800, null].filter((num) => {
-    if (typeof num === "number" && wide) {
-      return num * 2;
+  widths: [100, 150, 200, 300, 400, 600, 800, null].map((num) => {
+    if (typeof num === "number") {
+      return num * width;
     }
     return num;
   }),
 });
 
 const srcset = stats.webp.map(({ width, url }) => `${url} ${width}w`);
-srcset.push(src);
 ---
 
 <a
   href={href}
+  style={style}
   class={[
     "card flex flex-col py-2",
     "hover:squiggle hover:text-orange-600",
-    wide ? "col-span-2" : "",
-    className,
+    width === 2 && "col-span-2",
+    width === 3 && "col-span-3",
   ]
     .filter(Boolean)
     .join(" ")}

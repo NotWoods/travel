@@ -1,9 +1,44 @@
 ---
 import BaseHead from "../components/BaseHead.astro";
 import Footer from "../components/Footer.astro";
-import HomeCard from "../components/HomeCard.astro";
-import HomeLine from "../components/HomeLine.astro";
-import Squiggle from "../components/Squiggle.astro";
+import HomeHero from "../components/HomeHero.astro";
+import HomeRow, { Card } from "../components/HomeRow.astro";
+
+const cards: Card[][] = [
+  [
+    {
+      slug: "oahu-hawaii",
+      title: "Oahu",
+      img: "/images/oahu_honolulu.jpg",
+    },
+    {
+      slug: "big-island-hawaii",
+      title: "Big Island",
+      img: "/images/big_island_polulu_valley.jpg",
+      width: 2,
+    },
+  ],
+  [
+    {
+      slug: "budapest-hungary",
+      title: "Budapest, Hungary",
+      img: "/images/budapest_bath.jpg",
+    },
+  ],
+  [
+    {
+      slug: "east-coast-usa",
+      title: "East Coast USA",
+      img: "/images/ny_manhattan.jpg",
+      width: 2,
+    },
+    {
+      slug: "portland-oregon",
+      title: "Portland, OR",
+      img: "/images/oregon_sunriver.jpg",
+    },
+  ],
+];
 ---
 
 <!DOCTYPE html>
@@ -27,59 +62,15 @@ import Squiggle from "../components/Squiggle.astro";
       Our collection of travel notes straight out of our notebook!
     </aside>
     <main class="grid m-2 overflow-hidden">
-      <a
-        class="hero-card text-center relative p-8 mb-5 md:mr-10 md:mt-14 md:mb-20 text-white text-shadow shadow-black/50 hover:squiggle hover:text-orange-600"
+      <HomeHero
         href="/travel-guides/southeast-asia"
+        src="/images/thailand_pai_canyon.jpg"
       >
-        <h2
-          class="inline-block text-3xl sm:text-5xl font-ultracondensed relative z-10 transition-colors"
-        >
-          Southeast<br class="hidden sm:inline" />Asia
-          <Squiggle
-            class="absolute -bottom-10 -left-4 -right-8 text-black -z-1"
-          />
-        </h2>
-        <img
-          class="bg-black/30 absolute inset-0 w-full h-full object-cover object-top"
-          src="/images/thailand_pai_canyon.jpg"
-        />
-      </a>
+        Southeast <br class="hidden sm:inline" />Asia
+      </HomeHero>
+
       <section class="home-cards grid">
-        <HomeLine class="row-start-1" />
-        <HomeCard
-          class="row-start-2 col-start-1"
-          title="Oahu"
-          href="/travel-guides/oahu-hawaii"
-          src="/images/oahu_honolulu.jpg"
-        />
-        <HomeCard
-          class="row-start-2 col-start-2 col-span-2"
-          title="Big Island"
-          href="/travel-guides/big-island-hawaii"
-          src="/images/big_island_polulu_valley.jpg"
-        />
-
-        <HomeLine class="row-start-3" />
-        <HomeCard
-          class="row-start-4 col-start-1"
-          title="Budapest, Hungary"
-          href="/travel-guides/budapest-hungary"
-          src="/images/budapest_bath.jpg"
-        />
-
-        <HomeLine class="row-start-5" />
-        <HomeCard
-          class="row-start-6 col-start-1 col-span-2"
-          title="East Coast USA"
-          href="/travel-guides/east-coast-usa"
-          src="/images/ny_manhattan.jpg"
-        />
-        <HomeCard
-          class="row-start-6 col-start-3"
-          title="Portland, OR"
-          href="/travel-guides/portland-oregon"
-          src="/images/oregon_sunriver.jpg"
-        />
+        {cards.map((row, i) => <HomeRow index={i} row={row} />)}
       </section>
     </main>
     <Footer />
@@ -98,9 +89,6 @@ import Squiggle from "../components/Squiggle.astro";
       @media (min-width: 768px) {
         main {
           grid-template: 1fr / 40vw 1fr;
-        }
-        .hero-card {
-          min-height: 40vw;
         }
         .home-cards {
           --card-height: min(20vw, 300px);
