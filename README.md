@@ -1,11 +1,5 @@
-# Astro with Tailwind
+# ![Tiger x Daphne's Travels](public/social.jpg)
 
-```
-npm create astro@latest -- --template with-tailwindcss
-```
+Our collection of travel notes straight out of our notebook!
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/with-tailwindcss)
-
-Astro comes with [Tailwind](https://tailwindcss.com) support out of the box. This example showcases how to style your Astro project with Tailwind.
-
-For complete setup instructions, please see our [Styling Guide](https://docs.astro.build/guides/styling#-tailwind).
+Built with Astro and Tailwind, and uses Notion as a CMS. Our travel notes are pulled out of a Notion notebook using the API, then converted to HTML to display here.
