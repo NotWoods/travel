@@ -61,7 +61,7 @@ const cards: Card[][] = [
     <aside class="m-3 mt-0 mb-5 md:mb-20 text-sm">
       Our collection of travel notes straight out of our notebook!
     </aside>
-    <main class="grid m-2 overflow-hidden">
+    <main class="grid overflow-hidden">
       <HomeHero
         href="/travel-guides/southeast-asia"
         src="/images/thailand_pai_canyon.jpg"
@@ -76,6 +76,7 @@ const cards: Card[][] = [
     <Footer />
     <style>
       main {
+        margin: 8px;
         grid-template: 40vw 1fr / 1fr;
       }
       .home-cards {
@@ -83,7 +84,7 @@ const cards: Card[][] = [
         grid-template-columns:
           repeat(3, calc(var(--card-height) * 0.75))
           auto;
-        column-gap: min(2vw, 2rem);
+        column-gap: min(2vw, 32px);
         grid-auto-rows: 1px var(--card-height);
       }
       @media (min-width: 768px) {

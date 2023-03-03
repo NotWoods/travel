@@ -25,6 +25,7 @@ const { href, src, alt } = Astro.props;
     class="bg-black/30 absolute inset-0 w-full h-full object-cover object-top shadow shadow-black/30"
     src={src}
     widths={[200, 400, 600, 1000, 1400, null]}
+    sizes="(min-width: 768px) calc(40vw - 48px), calc(100vw - 16px)"
     alt={alt}
   />
 </a>

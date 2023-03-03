@@ -3,6 +3,7 @@ import Image, { ImageOptions } from "@11ty/eleventy-img";
 
 export interface Props extends astroHTML.JSX.ImgHTMLAttributes {
   widths: ImageOptions["widths"];
+  sizes: astroHTML.JSX.ImgHTMLAttributes["sizes"];
 }
 
 const { src, widths, ...props } = Astro.props;

@@ -6,6 +6,11 @@ const config = {
       fontFamily: {
         headings: ["Roboto Serif", "serif"],
       },
+      colors: {
+        background: {
+          tan: "#d3d1c4",
+        },
+      },
     },
   },
   plugins: [],

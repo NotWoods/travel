@@ -16,13 +16,8 @@ const { title, href, src, alt, width = 1, style } = Astro.props;
 
 <a
   href={href}
-  style={style}
-  class={[
-    "card flex flex-col py-2",
-    "hover:squiggle hover:text-orange-600",
-    width === 2 && "col-span-2",
-    width === 3 && "col-span-3",
-  ]
+  style={`${style}; grid-column-end: span ${width}`}
+  class={["card flex flex-col py-2", "hover:squiggle hover:text-orange-600"]
     .filter(Boolean)
     .join(" ")}
 >
@@ -41,6 +36,7 @@ const { title, href, src, alt, width = 1, style } = Astro.props;
       }
       return num;
     })}
+    sizes={`(min-width: 768px) calc(min(20vw, 300px) * ${width}), calc(min(35vw, 300px) * ${width})`}
     alt={alt}
   />
 </a>

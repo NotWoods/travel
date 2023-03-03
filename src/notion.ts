@@ -1,6 +1,6 @@
 import { Client } from "@notionhq/client";
 import { unified } from "unified";
-import notionRehype from "notion-rehype";
+import notionRehype from "notion-rehype-k";
 import rehypeKatex from "rehype-katex";
 import rehypeShiftHeading from "rehype-shift-heading";
 import rehypeSlug from "rehype-slug";

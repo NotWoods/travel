@@ -12,28 +12,26 @@
   },
   "dependencies": {
     "@11ty/eleventy-img": "^2.0.1",
-    "@astrojs/mdx": "^0.11.4",
-    "@astrojs/tailwind": "^2.1.1",
+    "@astrojs/mdx": "^0.17.2",
+    "@astrojs/tailwind": "^3.0.1",
     "@jsdevtools/rehype-toc": "^3.0.2",
-    "@notionhq/client": "^2.2.2",
-    "@types/canvas-confetti": "^1.4.3",
-    "astro": "^1.5.2",
-    "autoprefixer": "^10.4.12",
-    "canvas-confetti": "^1.5.1",
-    "notion-rehype": "^1.1.1",
-    "postcss": "^8.4.14",
+    "@notionhq/client": "^2.2.3",
+    "astro": "^2.0.15",
+    "autoprefixer": "^10.4.13",
+    "notion-rehype-k": "^1.1.6",
+    "postcss": "^8.4.21",
     "rehype-katex": "^6.0.2",
     "rehype-shift-heading": "^1.0.2",
     "rehype-slug": "^5.1.0",
     "rehype-stringify": "^9.0.3",
-    "tailwindcss": "^3.2.1",
+    "tailwindcss": "^3.2.7",
     "unified": "^10.1.2"
   },
   "devDependencies": {
-    "@tailwindcss/typography": "^0.5.7",
+    "@tailwindcss/typography": "^0.5.9",
     "@types/11ty__eleventy-img": "^2.0.1",
-    "@types/node": "^18.11.9",
-    "prettier": "^2.7.1",
-    "prettier-plugin-astro": "^0.6.0"
+    "@types/node": "^18.14.2",
+    "prettier": "^2.8.4",
+    "prettier-plugin-astro": "^0.8.0"
   }
 }

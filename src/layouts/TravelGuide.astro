@@ -44,7 +44,7 @@ const {
   <body>
     <Header />
 
-    <article class="mx-auto px-4">
+    <article class="mx-auto">
       <header class="pb-2 mb-4">
         <h1
           class="text-5xl inline-block relative font-ultracondensed text-shadow-sm shadow-black/30"
@@ -57,7 +57,7 @@ const {
         </h1>
         <div class="py-2 border-b border-zinc-900/40"></div>
         <div
-          class="text-sm py-2 px-1.5 text-right text-shadow shadow-[#d3d1c4]"
+          class="text-sm py-2 px-1.5 text-right text-shadow shadow-background-tan"
         >
           <Time pubDate={pubDate} updatedDate={updatedDate} />
           {
@@ -83,6 +83,7 @@ const {
           <Image
             class="cover mb-8 bg-black/30 object-cover overflow-hidden shadow shadow-black/30"
             widths={[800, 1600, null]}
+            sizes="(min-width: 768px) calc(calc(100vw - 4rem) - 300px) (min-width: 1280px) calc(calc(100vw - 48rem) - 300px), 100vw"
             src={cover}
           />
         )
@@ -93,6 +94,10 @@ const {
     </article>
     <Footer />
     <style>
+      article {
+        padding: 16px;
+      }
+
       .cover {
         grid-area: cover;
         margin-left: -1rem;

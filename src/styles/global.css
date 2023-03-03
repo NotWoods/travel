@@ -2,8 +2,7 @@ html {
   scroll-behavior: smooth;
 }
 body {
-  @apply font-sans text-zinc-900;
-  background-color: #d3d1c4;
+  @apply font-sans text-zinc-900 bg-background-tan;
   background-image: url("/noise.png");
 }
 
