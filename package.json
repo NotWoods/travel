@@ -25,13 +25,17 @@
     "rehype-slug": "^5.1.0",
     "rehype-stringify": "^9.0.3",
     "tailwindcss": "^3.2.7",
+    "ts-extras": "^0.11.0",
     "unified": "^10.1.2"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.9",
     "@types/11ty__eleventy-img": "^2.0.1",
     "@types/node": "^18.15.3",
+    "@types/slug": "^5.0.4",
     "prettier": "^2.8.4",
-    "prettier-plugin-astro": "^0.8.0"
+    "prettier-plugin-astro": "^0.8.0",
+    "slug": "^8.2.3",
+    "zod": "^3.22.1"
   }
 }

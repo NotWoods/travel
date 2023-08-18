@@ -1,3 +1,7 @@
 {
-  "extends": "astro/tsconfigs/base"
+  "extends": "astro/tsconfigs/base",
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "types": ["astro/client", "vite/client"]
+  }
 }
