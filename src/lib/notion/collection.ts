@@ -37,6 +37,10 @@ const pageProperties = z.object({
         .or(z.null()),
     })
     .or(z.null()),
+  Featured: z.object({
+    type: z.enum(["checkbox"]),
+    checkbox: z.boolean(),
+  }),
 });
 
 function plainText(data: ReadonlyArray<{ plain_text: string }>) {
@@ -71,6 +75,7 @@ export interface NotionCollectionEntry {
     updatedDate: Date;
     lastVisited?: Date;
     notionLink: string;
+    featured: boolean;
   };
 }
 
@@ -84,6 +89,10 @@ export interface NotionInvalidCollectionEntry {
 export async function getNotionCollection(databaseId: string) {
   const pages = await collectPaginatedAPI(notion.databases.query, {
     database_id: databaseId,
+    filter: {
+      property: "Hidden",
+      checkbox: { equals: false },
+    },
   });
 
   const successfulPages: NotionCollectionEntry[] = [];
@@ -99,13 +108,15 @@ export async function getNotionCollection(databaseId: string) {
     if (result.success) {
       const properties = result.data;
       const title = plainText(properties.Name.title);
+      console.log(title, slug(title));
 
       successfulPages.push({
         id: page.id,
         database: databaseId,
-        slug: properties.URL
-          ? plainText(properties.URL.rich_text)
-          : slug(title),
+        slug:
+          properties.URL && properties.URL.rich_text.length > 0
+            ? plainText(properties.URL.rich_text)
+            : slug(title),
         data: {
           title,
           shortName: properties["Short name"]
@@ -117,6 +128,7 @@ export async function getNotionCollection(databaseId: string) {
           lastVisited: properties["Last visited"]?.date?.start
             ? new Date(properties["Last visited"].date.start)
             : undefined,
+          featured: properties.Featured.checkbox,
           notionLink: page.url.replace(
             "https://www.notion.so",
             "https://tigeroakes.notion.site"

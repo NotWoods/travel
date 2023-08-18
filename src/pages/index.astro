@@ -1,44 +1,24 @@
 ---
 import BaseHead from "../components/BaseHead.astro";
 import Footer from "../components/Footer.astro";
+import HomeCard from "../components/HomeCard.astro";
+import HomeExtra from "../components/HomeExtra.astro";
 import HomeHero from "../components/HomeHero.astro";
 import HomeRow, { Card } from "../components/HomeRow.astro";
+import { databaseId, getNotionCollection } from "../lib/notion";
+
+const { fulfilled: pages } = await getNotionCollection(databaseId);
+
+const featuredPage = pages.find(page => page.data.featured);
+const pagesWithImages = pages.filter(page => page.data.cover && page.id !== featuredPage?.id)
+const pagesWithoutImages = pages.filter(page => !page.data.cover && page.id !== featuredPage?.id)
 
 const cards: Card[][] = [
-  [
-    {
-      slug: "oahu-hawaii",
-      title: "Oahu",
-      img: "/images/oahu_honolulu.jpg",
-    },
-    {
-      slug: "big-island-hawaii",
-      title: "Big Island",
-      img: "/images/big_island_polulu_valley.jpg",
-      width: 2,
-    },
-  ],
-  [
-    {
-      slug: "budapest-hungary",
-      title: "Budapest, Hungary",
-      img: "/images/budapest_bath.jpg",
-    },
-  ],
-  [
-    {
-      slug: "east-coast-usa",
-      title: "East Coast USA",
-      img: "/images/ny_manhattan.jpg",
-      width: 2,
-    },
-    {
-      slug: "portland-oregon",
-      title: "Portland, OR",
-      img: "/images/oregon_sunriver.jpg",
-    },
-  ],
-];
+  [{ width: 1, page: pagesWithImages[0] }, { width: 2, page: pagesWithImages[1] }],
+  [{ width: 1, page: pagesWithImages[2] }],
+  [{ width: 2, page: pagesWithImages[3] }, { width: 1, page: pagesWithImages[4] }],
+  pagesWithImages.slice(5).map(page => ({ width: 1, page }))
+]
 ---
 
 <!DOCTYPE html>
@@ -63,16 +43,18 @@ const cards: Card[][] = [
       Our collection of travel notes straight out of our notebook!
     </aside>
     <main class="grid overflow-hidden">
-      <HomeHero
-        href="/travel-guides/southeast-asia"
-        src="/images/thailand_pai_canyon.jpg"
+      {featuredPage && <HomeHero
+        href={`/travel-guides/${featuredPage.slug}`}
+        src={featuredPage.data.cover!}
       >
-        Southeast <br class="hidden sm:inline" />Asia
-      </HomeHero>
+        {featuredPage.data.title}
+      </HomeHero>}
 
       <section class="home-cards grid">
         {cards.map((row, i) => <HomeRow index={i} row={row} />)}
       </section>
+
+      <HomeExtra row={pagesWithoutImages} />
     </main>
     <Footer />
     <style>
