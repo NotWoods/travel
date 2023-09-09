@@ -1,23 +1,24 @@
 ---
-import Image, { ImageOptions } from "@11ty/eleventy-img";
+import EleventyImage, { type ImageOptions } from "@11ty/eleventy-img";
 
 export interface Props extends astroHTML.JSX.ImgHTMLAttributes {
+  src: string;
   widths: ImageOptions["widths"];
   sizes: astroHTML.JSX.ImgHTMLAttributes["sizes"];
 }
 
 const { src, widths, ...props } = Astro.props;
 
-const IS_URL = /^https?:\/\//;
+const IS_ABSOLUTE_URL = /^https?:\/\//;
 
-const stats = await Image(IS_URL.test(src) ? src : `public${src}`, {
+const stats = await EleventyImage(IS_ABSOLUTE_URL.test(src) ? src : `public${src}`, {
   formats: ["webp"],
   outputDir: `${import.meta.env.PROD ? "dist" : "public"}/assets/images`,
   urlPath: "/assets/images",
   widths,
 });
 
-const srcset = stats.webp.map(({ width, url }) => `${url} ${width}w`);
+const srcset = stats.webp!.map(({ width, url }) => `${url} ${width}w`);
 ---
 
 <img {...props} src={src} srcset={srcset.join(", ")} />

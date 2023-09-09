@@ -7,10 +7,6 @@ export interface Props {
 }
 
 const { tree, root = true } = Astro.props as Props;
-
-const Self =
-  tree.some((node) => node.children.length > 0) &&
-  (await import("./TableOfContentsList.astro")).default;
 ---
 
 <ul class:list={[root ? 'pl-0' : 'pl-5']}>
@@ -20,7 +16,7 @@ const Self =
         <a class="block link" href={`#${node.slug}`}>
           {node.text}
         </a>
-        {node.children.length > 0 && <Self tree={node.children} root={false} />}
+        {node.children.length > 0 && <Astro.self tree={node.children} root={false} />}
       </li>
     ))
   }

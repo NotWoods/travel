@@ -1,11 +1,11 @@
 import rehypeToc, {
-  HtmlElementNode,
-  ListNode,
-  TextNode,
+  type HtmlElementNode,
+  type ListNode,
+  type TextNode,
 } from "@jsdevtools/rehype-toc";
 import { notion } from "./client";
 import { iteratePaginatedAPI, isFullBlock } from "@notionhq/client";
-import { TreeNode } from "../../components/toc/tree-node";
+import type { TreeNode } from "../../components/toc/tree-node";
 import { processor } from "./processor";
 
 async function awaitAll<T>(iterable: AsyncIterable<T>) {
@@ -72,8 +72,7 @@ export async function renderNotionEntry(
         return false;
       },
     })
-    // @ts-ignore
-    .process({ data: blocks });
+    .process({ data: blocks } as Record<string, unknown>);
 
   return {
     headings: headerTree,
