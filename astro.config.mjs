@@ -5,5 +5,5 @@ import tailwind from "@astrojs/tailwind";
 // https://astro.build/config
 export default defineConfig({
   site: 'https://travel.tigerxdaphne.com',
-  integrations: [mdx(), tailwind()],
+  integrations: [mdx(), tailwind({applyBaseStyles:false})],
 });

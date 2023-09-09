@@ -40,7 +40,7 @@ export function asTree(headers: readonly Header[]): readonly TreeNode[] {
 
 <nav>
   <h2 class="font-ultracondensed text-xl mt-0">Table of contents</h2>
-  <div class="grow overflow-y-auto pb-4 -ml-5 text-zinc-800">
+  <div class="toc grow overflow-y-auto pb-4 text-zinc-800">
     <TableOfContentsList tree={tree} />
   </div>
 </nav>
@@ -48,5 +48,8 @@ export function asTree(headers: readonly Header[]): readonly TreeNode[] {
 <style>
   nav {
     grid-area: toc;
+  }
+  .toc {
+    margin-left: -0.125rem;
   }
 </style>

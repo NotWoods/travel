@@ -1,84 +1,88 @@
 ---
-import BaseHead from "../components/BaseHead.astro";
-import Footer from "../components/Footer.astro";
-import HomeCard from "../components/HomeCard.astro";
 import HomeExtra from "../components/HomeExtra.astro";
 import HomeHero from "../components/HomeHero.astro";
-import HomeRow, { Card } from "../components/HomeRow.astro";
+import HomeRow, { type Card } from "../components/HomeRow.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
 import { databaseId, getNotionCollection } from "../lib/notion";
 
 const { fulfilled: pages } = await getNotionCollection(databaseId);
 
-const featuredPage = pages.find(page => page.data.featured);
-const pagesWithImages = pages.filter(page => page.data.cover && page.id !== featuredPage?.id)
-const pagesWithoutImages = pages.filter(page => !page.data.cover && page.id !== featuredPage?.id)
+const featuredPage = pages.find((page) => page.data.featured);
+const pagesWithImages = pages.filter(
+  (page) => page.data.cover && page.id !== featuredPage?.id,
+);
+const pagesWithoutImages = pages.filter(
+  (page) => !page.data.cover && page.id !== featuredPage?.id,
+);
 
 const cards: Card[][] = [
-  [{ width: 1, page: pagesWithImages[0] }, { width: 2, page: pagesWithImages[1] }],
+  [
+    { width: 1, page: pagesWithImages[0] },
+    { width: 2, page: pagesWithImages[1] },
+  ],
   [{ width: 1, page: pagesWithImages[2] }],
-  [{ width: 2, page: pagesWithImages[3] }, { width: 1, page: pagesWithImages[4] }],
-  pagesWithImages.slice(5).map(page => ({ width: 1, page }))
-]
+  [
+    { width: 2, page: pagesWithImages[3] },
+    { width: 1, page: pagesWithImages[4] },
+  ],
+  pagesWithImages.slice(5).map((page) => ({ width: 1, page })),
+];
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <BaseHead
-      title="Tiger x Daphne's Travels"
-      description="Our collection of travel notes straight out of our notebook!"
-      image="/social.jpg"
-    />
-    <meta name="theme-color" content="#bdbabf" />
-  </head>
-  <body class="bg-[#bdbabf]">
-    <header class="m-3 mb-0 flex">
-      <h1 class="font-headings flex-1 font-normal text-xl font-extracondensed">
-        Tiger x Daphne's <span class="text-orange-700 font-semibold"
-          >Travels</span
-        >
-      </h1>
-    </header>
-    <aside class="m-3 mt-0 mb-5 md:mb-20 text-sm">
-      Our collection of travel notes straight out of our notebook!
-    </aside>
-    <main class="grid overflow-hidden">
-      {featuredPage && <HomeHero
-        href={`/travel-guides/${featuredPage.slug}`}
-        src={featuredPage.data.cover!}
+<BaseLayout
+  title="Tiger x Daphne's Travels"
+  description="Our collection of travel notes straight out of our notebook!"
+  themeColor="#bdbabf"
+>
+  <header class="m-3 mb-0 flex">
+    <h1 class="font-headings flex-1 font-normal text-xl font-extracondensed">
+      Tiger x Daphne's <span class="text-orange-700 font-semibold">Travels</span
       >
-        {featuredPage.data.title}
-      </HomeHero>}
+    </h1>
+  </header>
+  <aside class="m-3 mt-0 mb-5 md:mb-20 text-sm">
+    Our collection of travel notes straight out of our notebook!
+  </aside>
+  <main class="grid overflow-hidden">
+    {
+      featuredPage && (
+        <HomeHero
+          href={`/travel-guides/${featuredPage.slug}`}
+          src={featuredPage.data.cover!}
+        >
+          {featuredPage.data.title}
+        </HomeHero>
+      )
+    }
 
-      <section class="home-cards grid">
-        {cards.map((row, i) => <HomeRow index={i} row={row} />)}
-      </section>
+    <section class="home-cards grid">
+      {cards.map((row, i) => <HomeRow index={i} row={row} />)}
+    </section>
 
-      <HomeExtra row={pagesWithoutImages} />
-    </main>
-    <Footer />
-    <style>
-      main {
-        margin: 8px;
-        grid-template: 40vw 1fr / 1fr;
-      }
-      .home-cards {
-        --card-height: min(35vw, 300px);
-        grid-template-columns:
-          repeat(3, calc(var(--card-height) * 0.75))
-          auto;
-        column-gap: min(2vw, 32px);
-        grid-auto-rows: 1px var(--card-height);
-      }
-      @media (min-width: 768px) {
-        main {
-          grid-template: 1fr / 40vw 1fr;
-        }
-        .home-cards {
-          --card-height: min(20vw, 300px);
-          column-gap: min(2vw, 2rem);
-        }
-      }
-    </style>
-  </body>
-</html>
+    <HomeExtra row={pagesWithoutImages} />
+  </main>
+</BaseLayout>
+
+<style>
+  main {
+    margin: 8px;
+    grid-template: 40vw 1fr / 1fr;
+  }
+  .home-cards {
+    --card-height: min(35vw, 300px);
+    grid-template-columns:
+      repeat(3, calc(var(--card-height) * 0.75))
+      auto;
+    column-gap: min(2vw, 32px);
+    grid-auto-rows: 1px var(--card-height);
+  }
+  @media (min-width: 768px) {
+    main {
+      grid-template: 1fr / 40vw 1fr;
+    }
+    .home-cards {
+      --card-height: min(20vw, 300px);
+      column-gap: min(2vw, 2rem);
+    }
+  }
+</style>

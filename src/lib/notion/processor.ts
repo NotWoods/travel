@@ -6,7 +6,7 @@ import rehypeSlug from "rehype-slug";
 import rehypeStringify from "rehype-stringify";
 
 export const processor = unified()
-  .use(notionRehype) // Parse Notion blocks to rehype AST
+  .use(notionRehype, {}) // Parse Notion blocks to rehype AST
   .use(rehypeShiftHeading, { shift: 1 })
   .use(rehypeSlug)
   .use(rehypeKatex) // Then you can use any rehype plugins to enrich the AST

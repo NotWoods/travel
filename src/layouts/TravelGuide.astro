@@ -1,16 +1,14 @@
 ---
-import "../styles/prose.css";
-import BaseHead from "../components/BaseHead.astro";
 import Header from "../components/Header.astro";
 import Time from "../components/Time.astro";
-import Footer from "../components/Footer.astro";
 import Squiggle from "../components/Squiggle.astro";
 import TableOfContents, {
   asTree,
-  Header as TocHeader,
+  type Header as TocHeader,
 } from "../components/toc/TableOfContents.astro";
-import { TreeNode } from "../components/toc/tree-node";
+import type { TreeNode } from "../components/toc/tree-node";
 import Image from "../components/Image.astro";
+import BaseLayout from "./BaseLayout.astro";
 
 export interface Props {
   content: {
@@ -32,123 +30,170 @@ const {
 } = Astro.props;
 ---
 
-<html lang="en">
-  <head>
-    <BaseHead
-      title={`${title} travel guide from Tiger x Daphne`}
-      description={description}
-      image="/social.jpg"
-    />
-    <meta name="theme-color" content="#d3d1c4" />
-  </head>
+<BaseLayout
+  title={`${title} travel guide from Tiger x Daphne`}
+  description={description}
+  themeColor="#d3d1c4"
+>
+  <Header />
 
-  <body>
-    <Header />
-
-    <article class="mx-auto">
-      <header class="pb-2 mb-4">
-        <h1
-          class="text-5xl inline-block relative font-ultracondensed text-shadow-sm shadow-black/30"
-        >
-          {title}
-          <Squiggle
-            autoAnimate
-            class="absolute -top-10 -left-12 max-w-xs text-orange-500 -z-1"
-          />
-        </h1>
-        <div class="py-2 border-b border-zinc-900/40"></div>
-        <div
-          class="text-sm py-2 px-1.5 text-right text-shadow shadow-background-tan"
-        >
-          <Time pubDate={pubDate} updatedDate={updatedDate} />
-          {
-            notionLink && (
-              <a
-                class="block underline decoration-zinc-900/0 hover:decoration-zinc-900/40"
-                href={notionLink}
-              >
-                Open in Notion{" "}
-                <img
-                  class="inline w-4 h-4 align-top"
-                  alt=""
-                  src="/images/notion_logo.svg"
-                />
-              </a>
-            )
-          }
-        </div>
-      </header>
-      <TableOfContents tree={headings ? asTree(headings) : headerTree} />
-      {
-        cover && (
-          <Image
-            class="cover mb-8 bg-black/30 object-cover overflow-hidden shadow shadow-black/30"
-            widths={[800, 1600, null]}
-            sizes="(min-width: 768px) calc(calc(100vw - 4rem) - 300px) (min-width: 1280px) calc(calc(100vw - 48rem) - 300px), 100vw"
-            src={cover}
-          />
-        )
-      }
-      <div class="prose">
-        <slot />
+  <article class="mx-auto">
+    <header class="pb-2 mb-4">
+      <h1
+        class="text-5xl inline-block relative font-ultracondensed text-shadow-sm shadow-black/30"
+      >
+        {title}
+        <Squiggle
+          autoAnimate
+          class="absolute -top-10 -left-12 max-w-xs text-orange-500 -z-1"
+        />
+      </h1>
+      <div class="py-2 border-b border-zinc-900/40"></div>
+      <div
+        class="text-sm py-2 px-1.5 text-right text-shadow shadow-background-tan"
+      >
+        <Time pubDate={pubDate} updatedDate={updatedDate} />
+        {
+          notionLink && (
+            <a
+              class="block underline decoration-zinc-900/0 hover:decoration-zinc-900/40"
+              href={notionLink}
+            >
+              Open in Notion{" "}
+              <img
+                class="inline w-4 h-4 align-top"
+                alt=""
+                src="/images/notion_logo.svg"
+              />
+            </a>
+          )
+        }
       </div>
-    </article>
-    <Footer />
-    <style>
-      article {
-        padding: 16px;
-      }
+    </header>
+    <TableOfContents tree={headings ? asTree(headings) : headerTree} />
+    {
+      cover && (
+        <Image
+          class="cover mb-8 bg-black/30 object-cover overflow-hidden shadow shadow-black/30"
+          widths={[800, 1600, null]}
+          sizes="(min-width: 768px) calc(calc(100vw - 4rem) - 300px) (min-width: 1280px) calc(calc(100vw - 48rem) - 300px), 100vw"
+          src={cover}
+        />
+      )
+    }
+    <div class="prose">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>
 
-      .cover {
-        grid-area: cover;
-        margin-left: -1rem;
-        margin-right: -1rem;
-        width: calc(100% + 2rem);
-        max-width: initial;
-        height: 30vh;
-      }
+<style>
+  article {
+    padding: 16px;
+  }
 
-      @media (min-width: 768px) {
-        article {
-          display: grid;
-          column-gap: 2rem;
-          grid-template:
-            ".   header" auto
-            "toc cover" min-content
-            "toc content" auto
-            / 300px fit-content(48rem);
-        }
+  .cover {
+    grid-area: cover;
+    margin-left: -1rem;
+    margin-right: -1rem;
+    width: calc(100% + 2rem);
+    max-width: initial;
+    height: 30vh;
+  }
 
-        header {
-          grid-area: header;
-        }
-        .prose {
-          grid-area: content;
-        }
-        .cover {
-          margin-left: 0;
-          width: calc(100% + 1rem);
-        }
-      }
+  @media (min-width: 768px) {
+    article {
+      display: grid;
+      column-gap: 2rem;
+      grid-template:
+        ".   header" auto
+        "toc cover" min-content
+        "toc content" auto
+        / 300px fit-content(48rem);
+    }
 
-      @media (min-width: 1084px) {
-        .cover {
-          margin-right: 0;
-          width: 100%;
-        }
-      }
+    header {
+      grid-area: header;
+    }
+    .prose {
+      grid-area: content;
+    }
+    .cover {
+      margin-left: 0;
+      width: calc(100% + 1rem);
+    }
+  }
 
-      @media (min-width: 1280px) {
-        article {
-          grid-template:
-            ".   header  cover" auto
-            "toc content cover" auto
-            / 300px fit-content(48rem) auto;
-        }
-        .cover {
-          height: auto;
-        }
-      }
-    </style>
-  </body>
-</html>
+  @media (min-width: 1084px) {
+    .cover {
+      margin-right: 0;
+      width: 100%;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    article {
+      grid-template:
+        ".   header  cover" auto
+        "toc content cover" auto
+        / 300px fit-content(48rem) auto;
+    }
+    .cover {
+      height: auto;
+    }
+  }
+</style>
+
+<style is:global>
+  .prose p {
+    @apply my-0.5;
+  }
+
+  .prose ul {
+    @apply list-disc pl-5 ml-0.5;
+  }
+  .prose ul ul {
+    @apply ml-0;
+  }
+
+  .prose li {
+    @apply pl-0.5 my-0.5;
+  }
+  .prose li.task-list-item {
+    @apply list-none;
+  }
+  .prose li.task-list-item > input[type="checkbox"] {
+    @apply w-4 h-4;
+    margin-left: -1.25rem;
+  }
+
+  .prose h2 {
+    @apply mt-8 mb-1 text-3xl;
+  }
+  .prose h3 {
+    @apply mt-6 mb-0.5 text-2xl;
+  }
+
+  .prose mark,
+  .prose .color-yellow_background {
+    @apply bg-yellow-200/70;
+  }
+
+  .prose table {
+    @apply -mx-3;
+  }
+  .prose thead {
+    @apply text-left bg-zinc-100/30;
+  }
+  .prose th {
+    @apply font-normal;
+  }
+  .prose th,
+  .prose td {
+    @apply border border-zinc-100/70 p-2;
+  }
+
+  .prose :is(h1, h2, h3, h4, h5, h6):first-child {
+    margin-top: 0;
+  }
+</style>
