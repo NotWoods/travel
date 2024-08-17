@@ -15,7 +15,7 @@ const { row } = Astro.props;
   {
     row.map((page) => (
       <HomeCard
-        title={page.data.Name}
+        title={page.data.properties.Name}
         href={`/travel-guides/${destinationSlug(page)}`}
       />
     ))

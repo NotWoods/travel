@@ -13,6 +13,10 @@
     "./schemas/properties": {
       "import": "./dist/schemas/properties.js",
       "types": "./dist/schemas/properties.d.ts"
+    },
+    "./schemas/page": {
+      "import": "./dist/schemas/page.js",
+      "types": "./dist/schemas/page.d.ts"
     }
   },
   "version": "0.1.0",

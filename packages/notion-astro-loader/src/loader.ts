@@ -2,7 +2,7 @@ import { Client, isFullPage, iteratePaginatedAPI } from "@notionhq/client";
 import type { Loader } from "astro/loaders";
 import { renderNotionEntry } from "./entry.js";
 import { richTextToPlainText } from "./format.js";
-import { defaultNotionSchema } from "./schemas/loader.js";
+import { pageObjectSchema } from "./schemas/page.js";
 import type {
   ClientOptions,
   PageObjectResponse,
@@ -10,7 +10,10 @@ import type {
 } from "./types.js";
 
 export interface NotionLoaderOptions
-  extends Pick<ClientOptions, 'auth' | 'timeoutMs' | 'baseUrl' | 'notionVersion' | 'fetch' | 'agent'>,
+  extends Pick<
+      ClientOptions,
+      "auth" | "timeoutMs" | "baseUrl" | "notionVersion" | "fetch" | "agent"
+    >,
     Pick<
       QueryDatabaseParameters,
       "database_id" | "filter_properties" | "sorts" | "filter" | "archived"
@@ -60,7 +63,7 @@ export function notionLoader({
 
   return {
     name: "notion-loader",
-    schema: defaultNotionSchema,
+    schema: pageObjectSchema,
     async load({ store, logger, parseData }) {
       logger.info("Loading notion pages");
 
@@ -89,8 +92,11 @@ export function notionLoader({
             data: {
               icon: page.icon,
               cover: page.cover,
+              archived: page.archived,
+              in_trash: page.in_trash,
               url: page.url,
-              ...page.properties,
+              public_url: page.public_url,
+              properties: page.properties,
             },
           });
 

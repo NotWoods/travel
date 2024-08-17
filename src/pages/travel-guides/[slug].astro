@@ -27,14 +27,11 @@ const { Content, headings } = await render(page);
 
 <TravelGuideLayout
   content={{
-    title: page.data.Name,
+    title: page.data.properties.Name,
     cover: fileToUrl(page.data.cover),
-    pubDate: page.data.Created,
+    pubDate: page.data.properties.Created,
     updatedDate: page.data["Last visited"],
-    notionLink: page.data.url.replace(
-      "https://www.notion.so",
-      "https://tigeroakes.notion.site"
-    ),
+    notionLink: page.data.public_url ?? page.data.url,
   }}
   headings={headings}
 >

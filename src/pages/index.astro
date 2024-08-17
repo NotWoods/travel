@@ -9,7 +9,7 @@ import { destinationSlug } from "../content/destinations";
 
 const pages = await getCollection("destinations");
 
-const featuredPage = pages.find((page) => page.data.Featured);
+const featuredPage = pages.find((page) => page.data.properties.Featured);
 const pagesWithImages = pages.filter(
   (page) => page.data.cover && page.id !== featuredPage?.id
 );
@@ -51,7 +51,7 @@ const cards: Card[][] = [
           href={`/travel-guides/${destinationSlug(featuredPage)}`}
           src={fileToUrl(featuredPage.data.cover)!}
         >
-          {featuredPage.data.Name}
+          {featuredPage.data.properties.Name}
         </HomeHero>
       )
     }

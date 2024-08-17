@@ -1,6 +1,7 @@
 import { defineCollection } from "astro:content";
+import { z } from "astro/zod";
 import {
-  baseNotionSchema,
+  notionPageSchema,
   notionLoader,
   richTextToPlainText,
 } from "notion-astro-loader";
@@ -16,30 +17,34 @@ const destinations = defineCollection({
       checkbox: { equals: false },
     },
   }),
-  schema: baseNotionSchema.extend({
-    Name: propertyType.title.transform((property) =>
-      richTextToPlainText(property.title),
-    ),
-    Created: propertyType.created_time.transform(
-      (property) => new Date(property.created_time),
-    ),
-    URL: propertyType.rich_text
-      .optional()
-      .transform((property) =>
-        property ? richTextToPlainText(property.rich_text) : undefined,
+  schema: notionPageSchema(
+    z.object({
+      Name: propertyType.title.transform((property) =>
+        richTextToPlainText(property.title),
       ),
-    "Short name": propertyType.rich_text
-      .optional()
-      .transform((property) =>
-        property ? richTextToPlainText(property.rich_text) : undefined,
+      Created: propertyType.created_time.transform(
+        (property) => new Date(property.created_time),
       ),
-    "Last visited": propertyType.date
-      .optional()
-      .transform((property) =>
-        property?.date?.start ? new Date(property.date.start) : undefined,
+      URL: propertyType.rich_text
+        .optional()
+        .transform((property) =>
+          property ? richTextToPlainText(property.rich_text) : undefined,
+        ),
+      "Short name": propertyType.rich_text
+        .optional()
+        .transform((property) =>
+          property ? richTextToPlainText(property.rich_text) : undefined,
+        ),
+      "Last visited": propertyType.date
+        .optional()
+        .transform((property) =>
+          property?.date?.start ? new Date(property.date.start) : undefined,
+        ),
+      Featured: propertyType.checkbox.transform(
+        (property) => property.checkbox,
       ),
-    Featured: propertyType.checkbox.transform((property) => property.checkbox),
-  }),
+    }),
+  ),
 });
 
 export const collections = { destinations };
