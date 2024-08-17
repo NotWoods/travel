@@ -1,8 +1,5 @@
 {
   "name": "notion-astro-loader",
-  "workspaces": [
-    "packages/notion-astro-loader"
-  ],
   "type": "module",
   "exports": {
     ".": {
@@ -19,11 +16,7 @@
     }
   },
   "version": "0.1.0",
-  "scripts": {
-    "build": "tsc",
-    "prepublishOnly": "npm run build",
-    "test": "vitest"
-  },
+  "license": "MIT",
   "engines": {
     "node": ">=18"
   },
@@ -47,5 +40,10 @@
     "tsup": "^8.2.4",
     "typescript": "^5.5.4",
     "vitest": "^2.0.5"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "test": "vitest"
   }
 }
