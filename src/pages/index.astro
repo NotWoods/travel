@@ -4,7 +4,7 @@ import HomeExtra from "../components/HomeExtra.astro";
 import HomeHero from "../components/HomeHero.astro";
 import HomeRow, { type Card } from "../components/HomeRow.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { fileToUrl } from "../lib/notion";
+import { fileToUrl } from "notion-astro-loader";
 import { destinationSlug } from "../content/destinations";
 
 const pages = await getCollection("destinations");

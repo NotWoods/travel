@@ -1,0 +1,14 @@
+{
+  "extends": "astro/tsconfigs/strictest",
+  "compilerOptions": {
+    "types": ["astro/client", "vite/client"],
+    "exactOptionalPropertyTypes": false,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "dist",
+    "noEmit": false,
+    "declaration": true,
+    "allowImportingTsExtensions": false
+  },
+  "include": ["src"]
+}

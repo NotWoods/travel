@@ -1,8 +1,10 @@
 import { defineCollection } from "astro:content";
-import { notionLoader } from "../lib/notion";
-import { richTextToPlainText } from "../lib/notion";
-import { baseNotionData } from "../lib/notion/schemas";
-import * as propertyType from "../lib/notion/schemas/properties";
+import {
+  baseNotionSchema,
+  notionLoader,
+  richTextToPlainText,
+} from "notion-astro-loader";
+import * as propertyType from "notion-astro-loader/schemas/properties";
 
 const destinations = defineCollection({
   // The ID is a slug generated from the path of the file relative to `base`
@@ -14,7 +16,7 @@ const destinations = defineCollection({
       checkbox: { equals: false },
     },
   }),
-  schema: baseNotionData.extend({
+  schema: baseNotionSchema.extend({
     Name: propertyType.title.transform((property) =>
       richTextToPlainText(property.title),
     ),

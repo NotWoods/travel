@@ -1,5 +1,5 @@
 import { z } from "astro/zod";
-import { externalPropertyResponse, filePropertyResponse } from "./file";
+import { externalPropertyResponse, filePropertyResponse } from "./file.js";
 
 export const pageCover = z
   .discriminatedUnion("type", [externalPropertyResponse, filePropertyResponse])

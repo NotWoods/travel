@@ -1,15 +1,34 @@
-import rehypeToc, {
-  type HtmlElementNode,
-  type ListNode,
-  type TextNode,
+import type {
+  HtmlElementNode,
+  ListNode,
+  TextNode,
 } from "@jsdevtools/rehype-toc";
+import { toc as rehypeToc } from "@jsdevtools/rehype-toc";
 import {
   type Client,
   iteratePaginatedAPI,
   isFullBlock,
 } from "@notionhq/client";
-import { processor } from "./processor";
 import type { MarkdownHeading } from "astro";
+
+// #region Processor
+import notionRehype from "notion-rehype-k";
+import rehypeKatex from "rehype-katex";
+import rehypeShiftHeading from "rehype-shift-heading";
+import rehypeSlug from "rehype-slug";
+import rehypeStringify from "rehype-stringify";
+import { unified } from "unified";
+
+const processor = unified()
+  .use(notionRehype, {}) // Parse Notion blocks to rehype AST
+  .use(rehypeShiftHeading, { shift: 1 })
+  .use(rehypeSlug)
+  .use(
+    // @ts-ignore
+    rehypeKatex,
+  ) // Then you can use any rehype plugins to enrich the AST
+  .use(rehypeStringify); // Turn AST to HTML string
+// #endregion
 
 async function awaitAll<T>(iterable: AsyncIterable<T>) {
   const result: T[] = [];
@@ -51,6 +70,7 @@ async function* listBlocks(
 
     if (block.has_children) {
       const children = await awaitAll(listBlocks(client, block.id, imagePaths));
+      // @ts-ignore -- TODO: Make TypeScript happy here
       block[block.type].children = children;
     }
 

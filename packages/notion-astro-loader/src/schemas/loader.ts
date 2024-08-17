@@ -1,13 +1,13 @@
 import { z } from "astro/zod";
-import { pageIcon, pageCover, pageUrl } from "./page";
+import { pageIcon, pageCover, pageUrl } from "./page.js";
 
-export const baseNotionData = z.object({
+export const baseNotionSchema = z.object({
   icon: pageIcon,
   cover: pageCover,
   url: pageUrl,
 });
 
-export const notionData = baseNotionData.catchall(
+export const defaultNotionSchema = baseNotionSchema.catchall(
   z
     .object({
       type: z.string(),

@@ -2,7 +2,7 @@
 import { getCollection, render } from "astro:content";
 import TravelGuideLayout from "../../layouts/TravelGuide.astro";
 import { destinationSlug } from "../../content/destinations";
-import { fileToUrl } from "../../lib/notion";
+import { fileToUrl } from "notion-astro-loader";
 
 export async function getStaticPaths() {
   const pages = await getCollection("destinations");

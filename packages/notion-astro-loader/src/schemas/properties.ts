@@ -1,5 +1,5 @@
 import { z } from "astro/zod";
-import { externalPropertyResponse, filePropertyResponse } from "./file";
+import { externalPropertyResponse, filePropertyResponse } from "./file.js";
 
 function propertySchema<Type extends string, Schema extends z.ZodTypeAny>(
   type: Type,

@@ -1,13 +1,13 @@
 import { Client, isFullPage, iteratePaginatedAPI } from "@notionhq/client";
 import type { Loader } from "astro/loaders";
-import { renderNotionEntry } from "./entry";
-import { richTextToPlainText } from "./format";
-import { notionData } from "./schemas";
+import { renderNotionEntry } from "./entry.js";
+import { richTextToPlainText } from "./format.js";
+import { defaultNotionSchema } from "./schemas/loader.js";
 import type {
   ClientOptions,
   PageObjectResponse,
   QueryDatabaseParameters,
-} from "./types";
+} from "./types.js";
 
 export interface NotionLoaderOptions
   extends ClientOptions,
@@ -37,7 +37,7 @@ export function notionLoader({
 
   return {
     name: "notion-loader",
-    schema: notionData,
+    schema: defaultNotionSchema,
     async load({ store, logger, parseData }) {
       logger.info("Loading notion pages");
 

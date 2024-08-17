@@ -2,7 +2,7 @@
 import type { CollectionEntry } from "astro:content";
 import HomeCard from "./HomeCard.astro";
 import { destinationSlug } from "../content/destinations";
-import { fileToUrl } from "../lib/notion";
+import { fileToUrl } from "notion-astro-loader";
 
 export interface Card {
   page: CollectionEntry<"destinations">;

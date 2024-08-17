@@ -6,7 +6,7 @@
  */
 export function richTextToPlainText(
   data: ReadonlyArray<{ plain_text: string }>,
-) {
+): string {
   return data.map((text) => text.plain_text).join("");
 }
 
