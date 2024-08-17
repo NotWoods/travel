@@ -71,6 +71,7 @@ export function notionLoader({
             },
           });
 
+          logger.debug(`Rendering ${pageNameForLogger(page)}`);
           const renderPromise = renderNotionEntry(notionClient, page.id)
             .catch((error: unknown) => {
               const errorMessage =
@@ -82,6 +83,7 @@ export function notionLoader({
               logger.error(
                 `Failed to render ${pageNameForLogger(page)}: ${errorMessage}`,
               );
+              console.error(error);
 
               return undefined;
             })

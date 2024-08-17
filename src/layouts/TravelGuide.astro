@@ -1,10 +1,12 @@
 ---
 import type { MarkdownHeading } from "astro";
 import Header from "../components/Header.astro";
-import Image from "../components/Image.astro";
+import { Image } from "astro:assets";
 import Squiggle from "../components/Squiggle.astro";
 import Time from "../components/Time.astro";
-import TableOfContents, { asTree } from "../components/toc/TableOfContents.astro";
+import TableOfContents, {
+  asTree,
+} from "../components/toc/TableOfContents.astro";
 import type { TreeNode } from "../components/toc/tree-node";
 import BaseLayout from "./BaseLayout.astro";
 
@@ -72,8 +74,10 @@ const {
     {
       cover && (
         <Image
+          inferSize
+          alt=""
           class="cover mb-8 bg-black/30 object-cover overflow-hidden shadow shadow-black/30"
-          widths={[800, 1600, null]}
+          widths={[800, 1600]}
           sizes="(min-width: 768px) calc(calc(100vw - 4rem) - 300px) (min-width: 1280px) calc(calc(100vw - 48rem) - 300px), 100vw"
           src={cover}
         />

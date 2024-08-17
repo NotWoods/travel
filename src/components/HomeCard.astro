@@ -1,5 +1,5 @@
 ---
-import Image from "./Image.astro";
+import { Image } from "astro:assets";
 import Squiggle from "./Squiggle.astro";
 
 export interface Props {
@@ -11,7 +11,7 @@ export interface Props {
   style?: string;
 }
 
-const { title, href, src, alt, width = 1, style } = Astro.props;
+const { title, href, src, alt = "", width = 1, style } = Astro.props;
 ---
 
 <a
@@ -27,16 +27,16 @@ const { title, href, src, alt, width = 1, style } = Astro.props;
     {title}
     <Squiggle class="absolute -top-2 -left-4 -right-4 text-white -z-1" />
   </h2>
-  {src && <Image
-    class="flex-1 bg-black/30 object-cover overflow-hidden h-full shadow-sm shadow-black/30"
-    src={src}
-    widths={[100, 150, 200, 300, 400, 600, 800, null].map((num) => {
-      if (typeof num === "number") {
-        return num * width;
-      }
-      return num;
-    })}
-    sizes={`(min-width: 768px) calc(min(20vw, 300px) * ${width}), calc(min(35vw, 300px) * ${width})`}
-    alt={alt}
-  />}
+  {
+    src && (
+      <Image
+        inferSize
+        class="flex-1 bg-black/30 object-cover overflow-hidden h-full shadow-sm shadow-black/30"
+        src={src}
+        alt={alt}
+        widths={[100, 150, 200, 300, 400, 600, 800].map((num) => num * width)}
+        sizes={`(min-width: 768px) calc(min(20vw, 300px) * ${width}), calc(min(35vw, 300px) * ${width})`}
+      />
+    )
+  }
 </a>
