@@ -1,18 +1,20 @@
 ---
+import { getCollection } from "astro:content";
 import HomeExtra from "../components/HomeExtra.astro";
 import HomeHero from "../components/HomeHero.astro";
 import HomeRow, { type Card } from "../components/HomeRow.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { databaseId, getNotionCollection } from "../lib/notion";
+import { fileToUrl } from "../lib/notion";
+import { destinationSlug } from "../content/destinations";
 
-const { fulfilled: pages } = await getNotionCollection(databaseId);
+const pages = await getCollection("destinations");
 
-const featuredPage = pages.find((page) => page.data.featured);
+const featuredPage = pages.find((page) => page.data.Featured);
 const pagesWithImages = pages.filter(
-  (page) => page.data.cover && page.id !== featuredPage?.id,
+  (page) => page.data.cover && page.id !== featuredPage?.id
 );
 const pagesWithoutImages = pages.filter(
-  (page) => !page.data.cover && page.id !== featuredPage?.id,
+  (page) => !page.data.cover && page.id !== featuredPage?.id
 );
 
 const cards: Card[][] = [
@@ -46,10 +48,10 @@ const cards: Card[][] = [
     {
       featuredPage && (
         <HomeHero
-          href={`/travel-guides/${featuredPage.slug}`}
-          src={featuredPage.data.cover!}
+          href={`/travel-guides/${destinationSlug(featuredPage)}`}
+          src={fileToUrl(featuredPage.data.cover)!}
         >
-          {featuredPage.data.title}
+          {featuredPage.data.Name}
         </HomeHero>
       )
     }

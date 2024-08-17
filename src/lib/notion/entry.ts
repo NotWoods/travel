@@ -3,10 +3,13 @@ import rehypeToc, {
   type ListNode,
   type TextNode,
 } from "@jsdevtools/rehype-toc";
-import { notion } from "./client";
-import { iteratePaginatedAPI, isFullBlock } from "@notionhq/client";
-import type { TreeNode } from "../../components/toc/tree-node";
+import {
+  type Client,
+  iteratePaginatedAPI,
+  isFullBlock,
+} from "@notionhq/client";
 import { processor } from "./processor";
+import type { MarkdownHeading } from "astro";
 
 async function awaitAll<T>(iterable: AsyncIterable<T>) {
   const result: T[] = [];
@@ -16,16 +19,38 @@ async function awaitAll<T>(iterable: AsyncIterable<T>) {
   return result;
 }
 
-async function* listBlocks(blockId: string) {
-  for await (const block of iteratePaginatedAPI(notion.blocks.children.list, {
+/**
+ * Return a generator that yields all blocks in a Notion page, recursively.
+ * @param blockId ID of block to get chidren for.
+ * @param imagePaths MUTATED. This function will push image paths to this array.
+ */
+async function* listBlocks(
+  client: Client,
+  blockId: string,
+  imagePaths: string[],
+) {
+  for await (const block of iteratePaginatedAPI(client.blocks.children.list, {
     block_id: blockId,
   })) {
     if (!isFullBlock(block)) {
       continue;
     }
 
+    if (block.type === "image") {
+      let url: string;
+      switch (block.image.type) {
+        case "external":
+          url = block.image.external.url;
+          break;
+        case "file":
+          url = block.image.file.url;
+          break;
+      }
+      imagePaths.push(url);
+    }
+
     if (block.has_children) {
-      const children = await awaitAll(listBlocks(block.id));
+      const children = await awaitAll(listBlocks(client, block.id, imagePaths));
       block[block.type].children = children;
     }
 
@@ -33,49 +58,65 @@ async function* listBlocks(blockId: string) {
   }
 }
 
-function extractTocHeadings(toc: HtmlElementNode): TreeNode[] {
+function extractTocHeadings(toc: HtmlElementNode): MarkdownHeading[] {
   if (toc.tagName !== "nav") {
     throw new Error(`Expected nav, got ${toc.tagName}`);
   }
 
-  function listElementToTree(ol: ListNode): TreeNode[] {
-    return ol.children.map((li) => {
+  function listElementToTree(ol: ListNode, depth: number): MarkdownHeading[] {
+    return ol.children.flatMap((li) => {
       const [_link, subList] = li.children;
       const link = _link as HtmlElementNode;
 
-      return {
+      const currentHeading: MarkdownHeading = {
+        depth,
         text: (link.children![0] as TextNode).value,
         slug: link.properties.href!.slice(1),
-        children: subList ? listElementToTree(subList as ListNode) : [],
       };
+
+      let headings = [currentHeading];
+      if (subList) {
+        headings = headings.concat(
+          listElementToTree(subList as ListNode, depth + 1),
+        );
+      }
+      return headings;
     });
   }
 
-  return listElementToTree(toc.children![0] as ListNode);
+  return listElementToTree(toc.children![0] as ListNode, 0);
 }
 
 export interface RenderedNotionEntry {
-  headings: TreeNode[];
   html: string;
+  metadata: {
+    imagePaths: string[];
+    headings: MarkdownHeading[];
+  };
 }
 
 export async function renderNotionEntry(
-  pageId: string
+  client: Client,
+  pageId: string,
 ): Promise<RenderedNotionEntry> {
-  const blocks = await awaitAll(listBlocks(pageId));
-  let headerTree: TreeNode[] = [];
+  const imagePaths: string[] = [];
+  const blocks = await awaitAll(listBlocks(client, pageId, imagePaths));
+  let headings: MarkdownHeading[] = [];
 
   const vFile = await processor()
     .use(rehypeToc, {
       customizeTOC(toc) {
-        headerTree = extractTocHeadings(toc);
+        headings = extractTocHeadings(toc);
         return false;
       },
     })
     .process({ data: blocks } as Record<string, unknown>);
 
   return {
-    headings: headerTree,
     html: vFile.toString(),
+    metadata: {
+      headings,
+      imagePaths,
+    },
   };
 }

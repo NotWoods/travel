@@ -1,13 +1,11 @@
 ---
+import type { MarkdownHeading } from "astro";
 import Header from "../components/Header.astro";
-import Time from "../components/Time.astro";
-import Squiggle from "../components/Squiggle.astro";
-import TableOfContents, {
-  asTree,
-  type Header as TocHeader,
-} from "../components/toc/TableOfContents.astro";
-import type { TreeNode } from "../components/toc/tree-node";
 import Image from "../components/Image.astro";
+import Squiggle from "../components/Squiggle.astro";
+import Time from "../components/Time.astro";
+import TableOfContents, { asTree } from "../components/toc/TableOfContents.astro";
+import type { TreeNode } from "../components/toc/tree-node";
 import BaseLayout from "./BaseLayout.astro";
 
 export interface Props {
@@ -19,7 +17,7 @@ export interface Props {
     cover?: string;
     notionLink?: string;
   };
-  headings?: readonly TocHeader[];
+  headings?: readonly MarkdownHeading[];
   headerTree?: readonly TreeNode[];
 }
 

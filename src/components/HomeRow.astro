@@ -1,9 +1,11 @@
 ---
-import type { NotionCollectionEntry } from "../lib/notion";
+import type { CollectionEntry } from "astro:content";
 import HomeCard from "./HomeCard.astro";
+import { destinationSlug } from "../content/destinations";
+import { fileToUrl } from "../lib/notion";
 
 export interface Card {
-  page: NotionCollectionEntry
+  page: CollectionEntry<"destinations">;
   width: 1 | 2 | 3;
 }
 
@@ -17,11 +19,14 @@ const { row, index } = Astro.props;
 let colCount = 1;
 ---
 
-{row.length > 0 &&
-<hr
-  class="col-span-full border-zinc-900"
-  style={`grid-row: ${index * 2 + 1}`}
-/>}
+{
+  row.length > 0 && (
+    <hr
+      class="col-span-full border-zinc-900"
+      style={`grid-row: ${index * 2 + 1}`}
+    />
+  )
+}
 {
   row.map((card) => {
     if (!card) {
@@ -29,14 +34,16 @@ let colCount = 1;
       return null;
     }
 
+    const slug = destinationSlug(card.page);
+
     const { width = 1 } = card;
     const style = `grid-row: ${index * 2 + 2}; grid-column-start: ${colCount}`;
     colCount += width;
     return (
       <HomeCard
-        href={`/travel-guides/${card.page.slug}`}
-        title={card.page.data.title}
-        src={card.page.data.cover}
+        href={`/travel-guides/${slug}`}
+        title={card.page.data.Name}
+        src={fileToUrl(card.page.data.cover)}
         width={width}
         style={style}
       />

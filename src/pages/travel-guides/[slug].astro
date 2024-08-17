@@ -1,25 +1,16 @@
 ---
+import { getCollection, render } from "astro:content";
 import TravelGuideLayout from "../../layouts/TravelGuide.astro";
-import {
-  getNotionCollection,
-  databaseId,
-  renderNotionEntry,
-} from "../../lib/notion";
+import { destinationSlug } from "../../content/destinations";
+import { fileToUrl } from "../../lib/notion";
 
 export async function getStaticPaths() {
-  const { fulfilled, rejected } = await getNotionCollection(databaseId);
+  const pages = await getCollection("destinations");
 
-  if (rejected.length > 0) {
-    console.warn("Failed to parse:");
-    for (const failed of rejected) {
-      console.log("-", failed.id, failed.errors, failed.page, "\n");
-    }
-  }
-
-  return fulfilled.map((page) => {
+  return pages.map((page) => {
     return {
       params: {
-        slug: page.slug,
+        slug: destinationSlug(page),
       },
       props: {
         page,
@@ -31,9 +22,21 @@ export async function getStaticPaths() {
 export type Props = Awaited<ReturnType<typeof getStaticPaths>>[number]["props"];
 const { page } = Astro.props;
 
-const { html, headings } = await renderNotionEntry(page.id);
+const { Content, headings } = await render(page);
 ---
 
-<TravelGuideLayout content={page.data} headerTree={headings}>
-  <Fragment set:html={html} />
+<TravelGuideLayout
+  content={{
+    title: page.data.Name,
+    cover: fileToUrl(page.data.cover),
+    pubDate: page.data.Created,
+    updatedDate: page.data["Last visited"],
+    notionLink: page.data.url.replace(
+      "https://www.notion.so",
+      "https://tigeroakes.notion.site"
+    ),
+  }}
+  headings={headings}
+>
+  <Content />
 </TravelGuideLayout>
