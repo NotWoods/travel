@@ -51,7 +51,7 @@
     "vitest": "^2.0.5"
   },
   "scripts": {
-    "clean": "crossrm dist",
+    "clean": "crossrm dist tsconfig.tsbuildinfo",
     "build": "tsc --build",
     "build:watch": "tsc --watch",
     "prepublishOnly": "npm run build",
