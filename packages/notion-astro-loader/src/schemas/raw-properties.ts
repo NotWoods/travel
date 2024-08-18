@@ -193,3 +193,4 @@ export const rollup = propertySchema(
     }),
   ]),
 );
+export const unique_id = propertySchema("unique_id", z.any());

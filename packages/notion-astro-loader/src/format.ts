@@ -28,3 +28,24 @@ export function fileToUrl(
       return undefined;
   }
 }
+
+/**
+ * Replace date strings with date objects.
+ */
+export function dateToDateObjects(
+  dateResponse: {
+    start: string;
+    end: string | null;
+    time_zone: string | null;
+  } | null,
+) {
+  if (dateResponse === null) {
+    return null;
+  }
+
+  return {
+    start: new Date(dateResponse.start),
+    end: dateResponse.end ? new Date(dateResponse.end) : null,
+    time_zone: dateResponse.time_zone,
+  };
+}

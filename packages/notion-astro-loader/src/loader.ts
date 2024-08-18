@@ -1,8 +1,9 @@
 import { Client, isFullPage, iteratePaginatedAPI } from "@notionhq/client";
 import type { Loader } from "astro/loaders";
-import { renderNotionEntry } from "./entry.js";
+import { propertiesSchemaForDatabase } from "./database-properties.js";
 import { richTextToPlainText } from "./format.js";
-import { pageObjectSchema } from "./schemas/page.js";
+import { renderNotionEntry } from "./render.js";
+import { notionPageSchema } from "./schemas/page.js";
 import type {
   ClientOptions,
   PageObjectResponse,
@@ -63,7 +64,13 @@ export function notionLoader({
 
   return {
     name: "notion-loader",
-    schema: pageObjectSchema,
+    schema: async () =>
+      notionPageSchema({
+        properties: await propertiesSchemaForDatabase(
+          notionClient,
+          database_id,
+        ),
+      }),
     async load({ store, logger, parseData }) {
       logger.info("Loading notion pages");
 

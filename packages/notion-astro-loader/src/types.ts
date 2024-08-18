@@ -1,4 +1,4 @@
-import type { Client, isFullPage } from "@notionhq/client";
+import type { Client, isFullPage, isFullDatabase } from "@notionhq/client";
 
 /**
  * @module
@@ -14,6 +14,10 @@ export type ClientOptions = NonNullable<
 >;
 export interface QueryDatabaseParameters
   extends NonNullable<Parameters<Client["databases"]["query"]>[0]> {}
+
+export type DatabasePropertyConfigResponse = Asserts<
+  typeof isFullDatabase
+>["properties"][string];
 
 export type PageObjectResponse = Asserts<typeof isFullPage>;
 export type PageProperty = PageObjectResponse["properties"][string];

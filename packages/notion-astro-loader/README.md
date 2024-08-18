@@ -46,7 +46,7 @@ const database = defineCollection({
 });
 ```
 
-You can then use these like any other content collection in Astro.
+You can then use these like any other content collection in Astro. The data is type-safe, and the types are automatically generated based on the schema of the Notion database.
 
 ## Options
 
