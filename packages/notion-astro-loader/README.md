@@ -44,9 +44,39 @@ const database = defineCollection({
     },
   }),
 });
+
+export const collections = { database };
 ```
 
 You can then use these like any other content collection in Astro. The data is type-safe, and the types are automatically generated based on the schema of the Notion database.
+
+### Advanced Schema
+
+Helper Zod schemas are provided to let you customize and transform Notion page properties.
+This can be used instead of the automatic inference.
+
+```ts
+// src/content/config.ts
+import { z } from "astro/zod";
+import { defineCollection } from "astro:content";
+import { notionLoader } from "notion-astro-loader";
+import { notionPageSchema, propertySchema, transformedPropertySchema } from "notion-astro-loader/schemas";
+
+const database = defineCollection({
+  loader: notionLoader({
+    auth: import.meta.env.NOTION_TOKEN,
+    database_id: import.meta.env.NOTION_DATABASE_ID,
+  }),
+  schema: notionPageSchema({
+    properties: z.object({
+      Name: transformedPropertySchema.title,
+      Created: propertySchema.created_time.optional(),
+    })
+  })
+});
+
+export const collections = { database };
+```
 
 ## Options
 
