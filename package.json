@@ -9,10 +9,11 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build",
+    "build:astro": "astro build",
+    "build": "npm run check && npm run build:astro",
     "preview": "astro preview",
     "astro": "astro",
-    "check": "astro check"
+    "check": "tsc --build && astro check"
   },
   "dependencies": {
     "postcss": "^8.4.41",

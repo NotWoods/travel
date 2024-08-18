@@ -46,7 +46,6 @@
     "@types/slug": "^5.0.9",
     "astro": "^4.14.2",
     "crossrm": "^1.0.0",
-    "tsup": "^8.2.4",
     "typescript": "^5.5.4",
     "vitest": "^2.0.5"
   },
