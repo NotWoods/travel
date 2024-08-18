@@ -54,5 +54,10 @@
     "build:watch": "tsc --watch",
     "prepublishOnly": "npm run build",
     "test": "vitest"
-  }
+  },
+  "keywords": [
+    "astro-loader",
+    "astro",
+    "notion"
+  ]
 }
