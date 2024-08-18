@@ -3,6 +3,7 @@
 .astro
 dist/
 public/assets
+*.tsbuildinfo
 
 # dependencies
 node_modules/

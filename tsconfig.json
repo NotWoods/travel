@@ -1,7 +1,15 @@
 {
   "extends": "astro/tsconfigs/base",
+  "references": [
+    {
+      "path": "./packages/notion-astro-loader"
+    }
+  ],
   "compilerOptions": {
+    "composite": true,
     "strictNullChecks": true,
     "types": ["astro/client", "vite/client"]
-  }
+  },
+  "include": ["src"],
+  "exclude": ["packages"]
 }

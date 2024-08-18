@@ -50,7 +50,8 @@
     "vitest": "^2.0.5"
   },
   "scripts": {
-    "build": "tsc",
+    "clean": "node -e \"fs.rmSync('./dist', { recursive: true, force: true })\"",
+    "build": "tsc --build",
     "build:watch": "tsc --watch",
     "prepublishOnly": "npm run build",
     "test": "vitest"
