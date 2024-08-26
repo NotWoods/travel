@@ -1,5 +1,6 @@
 {
   "name": "notion-astro-loader",
+  "description": "Notion loader for the experimental Astro Content Layer API. It allows you to load pages from a Notion database then render them as pages in a collection.",
   "type": "module",
   "exports": {
     ".": {
@@ -23,7 +24,7 @@
       "types": "./dist/schemas/page.d.ts"
     }
   },
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "engines": {
     "node": ">=18"
@@ -56,6 +57,16 @@
     "prepublishOnly": "npm run build",
     "test": "vitest"
   },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "bugs": {
+    "url": "https://github.com/NotWoods/travel/issues",
+    "email": "contact@tigeroakes.com"
+  },
+  "homepage": "https://github.com/NotWoods/travel/tree/main/packages/notion-astro-loader#readme",
+  "repository": "github:NotWoods/travel",
   "keywords": [
     "astro-loader",
     "astro",
