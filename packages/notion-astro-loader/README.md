@@ -38,6 +38,7 @@ const database = defineCollection({
   loader: notionLoader({
     auth: import.meta.env.NOTION_TOKEN,
     database_id: import.meta.env.NOTION_DATABASE_ID,
+    // Use Notion sorting and filtering
     filter: {
       property: "Hidden",
       checkbox: { equals: false },
@@ -69,7 +70,9 @@ const database = defineCollection({
   }),
   schema: notionPageSchema({
     properties: z.object({
+      // Converts to a primitive string
       Name: transformedPropertySchema.title,
+      // Converts to a Notion API created_time object
       Created: propertySchema.created_time.optional(),
     })
   })
