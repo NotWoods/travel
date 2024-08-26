@@ -1,6 +1,8 @@
 /**
  * Extract a plain string from a list of rich text items.
  *
+ * @see https://developers.notion.com/reference/rich-text
+ *
  * @example
  * richTextToPlainText(page.properties.Name.title)
  */
@@ -12,6 +14,8 @@ export function richTextToPlainText(
 
 /**
  * Extract the URL from a file property.
+ *
+ * @see https://developers.notion.com/reference/file-object
  */
 export function fileToUrl(
   file:
@@ -31,6 +35,8 @@ export function fileToUrl(
 
 /**
  * Replace date strings with date objects.
+ *
+ * @see https://developers.notion.com/reference/page-property-values#date
  */
 export function dateToDateObjects(
   dateResponse: {

@@ -81,6 +81,14 @@ const database = defineCollection({
 export const collections = { database };
 ```
 
+### Formatters
+
+A few helper functions are provided for transforming Notion API objects into simple JavaScript types.
+
+- `richTextToPlainText` converts [rich text](https://developers.notion.com/reference/rich-text) into plain strings
+- `fileToUrl` converts [file objects](https://developers.notion.com/reference/file-object) to a URL string.
+- `dateToDateObjects` converts the strings in a [date property](https://developers.notion.com/reference/page-property-values#date) into `Date`s.
+
 ## Options
 
 The `notionLoader` function takes an object with the same options as the [`notionClient.databases.query`](https://developers.notion.com/reference/post-database-query) function, and the same options as the notion [`Client` constructor](https://github.com/makenotion/notion-sdk-js?tab=readme-ov-file#client-options).
