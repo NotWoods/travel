@@ -1,0 +1,16 @@
+{
+  "$schema": "https://jsr.io/schema/config-file.v1.json",
+  "name": "@notwoods/notion-astro-loader",
+  "version": "0.1.1",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schemas": "./src/schemas/index.ts",
+    "./schemas/raw-properties": "./src/schemas/raw-properties.ts",
+    "./schemas/transformed-properties": "./src/schemas/transformed-properties.ts",
+    "./schemas/page": "./src/schemas/page.ts"
+  },
+  "publish": {
+    "include": ["src/**/*", "README.md"]
+  }
+}
