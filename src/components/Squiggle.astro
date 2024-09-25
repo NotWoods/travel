@@ -32,7 +32,9 @@ const { class: className, autoAnimate } = Astro.props;
   .squiggle__path {
     stroke-dashoffset: calc(453px - calc(var(--squiggle-length, 1) * 453px));
     stroke-dasharray: 453 453;
-    transition: stroke-dashoffset 1s ease-out, visibility 1s ease-out;
+    transition:
+      stroke-dashoffset 1s ease-out,
+      visibility 1s ease-out;
   }
   .squiggle__path.animate {
     animation: 2s ease-out squiggle;

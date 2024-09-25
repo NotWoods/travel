@@ -3,20 +3,22 @@ import type { TreeNode } from "./tree-node";
 
 export interface Props {
   tree: readonly TreeNode[];
-  root?: boolean
+  root?: boolean;
 }
 
 const { tree, root = true } = Astro.props as Props;
 ---
 
-<ul class:list={[root ? 'pl-0' : 'pl-5']}>
+<ul class:list={[root ? "pl-0" : "pl-5"]}>
   {
     tree.map((node) => (
       <li class="list-none pl-0.5 my-0.5">
         <a class="block link" href={`#${node.slug}`}>
           {node.text}
         </a>
-        {node.children.length > 0 && <Astro.self tree={node.children} root={false} />}
+        {node.children.length > 0 && (
+          <Astro.self tree={node.children} root={false} />
+        )}
       </li>
     ))
   }

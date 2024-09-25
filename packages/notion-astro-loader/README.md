@@ -61,7 +61,11 @@ This can be used instead of the automatic inference.
 import { z } from "astro/zod";
 import { defineCollection } from "astro:content";
 import { notionLoader } from "notion-astro-loader";
-import { notionPageSchema, propertySchema, transformedPropertySchema } from "notion-astro-loader/schemas";
+import {
+  notionPageSchema,
+  propertySchema,
+  transformedPropertySchema,
+} from "notion-astro-loader/schemas";
 
 const database = defineCollection({
   loader: notionLoader({
@@ -74,8 +78,8 @@ const database = defineCollection({
       Name: transformedPropertySchema.title,
       // Converts to a Notion API created_time object
       Created: propertySchema.created_time.optional(),
-    })
-  })
+    }),
+  }),
 });
 
 export const collections = { database };

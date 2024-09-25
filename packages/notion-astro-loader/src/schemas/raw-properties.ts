@@ -29,7 +29,10 @@ const selectPropertyResponse = z.object({
   name: z.string(),
   color: z.string(),
 });
-const dateField = z.union([z.string().date(), z.string().datetime({ offset: true })]);
+const dateField = z.union([
+  z.string().date(),
+  z.string().datetime({ offset: true }),
+]);
 const dateResponse = z.object({
   start: dateField,
   end: dateField.nullable(),

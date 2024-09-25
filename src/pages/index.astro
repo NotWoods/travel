@@ -11,10 +11,10 @@ const pages = await getCollection("destinations");
 
 const featuredPage = pages.find((page) => page.data.properties.Featured);
 const pagesWithImages = pages.filter(
-  (page) => page.data.cover && page.id !== featuredPage?.id
+  (page) => page.data.cover && page.id !== featuredPage?.id,
 );
 const pagesWithoutImages = pages.filter(
-  (page) => !page.data.cover && page.id !== featuredPage?.id
+  (page) => !page.data.cover && page.id !== featuredPage?.id,
 );
 
 const cards: Card[][] = [

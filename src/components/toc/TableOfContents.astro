@@ -16,7 +16,7 @@ export interface Props {
 const { tree } = Astro.props as Props;
 
 export function asTree(
-  headers: readonly MarkdownHeading[]
+  headers: readonly MarkdownHeading[],
 ): readonly TreeNode[] {
   const tree: MutableTreeNode[] = [];
   const lastAtDepths = new Map<number, MutableTreeNode>();

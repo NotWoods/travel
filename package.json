@@ -13,7 +13,8 @@
     "build": "npm run check && npm run build:astro",
     "preview": "astro preview",
     "astro": "astro",
-    "check": "tsc --build && astro check"
+    "check": "tsc --build && astro check",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "postcss": "^8.4.41",
@@ -28,8 +29,8 @@
     "@types/slug": "^5.0.7",
     "astro": "^4.14.2",
     "autoprefixer": "^10.4.16",
-    "prettier": "^3.2.2",
-    "prettier-plugin-astro": "^0.12.3",
+    "prettier": "^3.3.3",
+    "prettier-plugin-astro": "^0.14.1",
     "rehype-katex": "^6.0.0",
     "sharp": "^0.33.5",
     "slug": "^9.1.0",
