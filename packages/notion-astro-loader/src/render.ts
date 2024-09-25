@@ -55,6 +55,12 @@ async function* listBlocks(
       continue;
     }
 
+    if (block.has_children) {
+      const children = await awaitAll(listBlocks(client, block.id, imagePaths));
+      // @ts-ignore -- TODO: Make TypeScript happy here
+      block[block.type].children = children;
+    }
+
     if (block.type === "image") {
       let url: string;
       switch (block.image.type) {
@@ -66,15 +72,15 @@ async function* listBlocks(
           break;
       }
       imagePaths.push(url);
-    }
 
-    if (block.has_children) {
-      const children = await awaitAll(listBlocks(client, block.id, imagePaths));
-      // @ts-ignore -- TODO: Make TypeScript happy here
-      block[block.type].children = children;
+      // notion-rehype-k incorrectly expects "file" to be a string instead of an object
+      yield {
+        ...block,
+        image: { type: block.image.type, [block.image.type]: url },
+      };
+    } else {
+      yield block;
     }
-
-    yield block;
   }
 }
 
