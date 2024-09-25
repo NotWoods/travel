@@ -29,7 +29,7 @@ const selectPropertyResponse = z.object({
   name: z.string(),
   color: z.string(),
 });
-const dateField = z.union([z.string().date(), z.string().datetime()]);
+const dateField = z.union([z.string().date(), z.string().datetime({ offset: true })]);
 const dateResponse = z.object({
   start: dateField,
   end: dateField.nullable(),
@@ -42,7 +42,7 @@ const formulaPropertyResponse = z.discriminatedUnion("type", [
   }),
   z.object({
     type: z.literal("date"),
-    date: z.string().datetime().nullable(),
+    date: z.string().datetime({ offset: true }).nullable(),
   }),
   z.object({
     type: z.literal("number"),
@@ -136,7 +136,7 @@ export const files = propertySchema(
 export const created_by = propertySchema("created_by", userObjectResponse);
 export const created_time = propertySchema(
   "created_time",
-  z.string().datetime(),
+  z.string().datetime({ offset: true }),
 );
 export const last_edited_by = propertySchema(
   "last_edited_by",
@@ -144,7 +144,7 @@ export const last_edited_by = propertySchema(
 );
 export const last_edited_time = propertySchema(
   "last_edited_time",
-  z.string().datetime(),
+  z.string().datetime({ offset: true }),
 );
 export const formula = propertySchema("formula", formulaPropertyResponse);
 export const title = propertySchema("title", z.array(richTextItemResponse));
@@ -165,7 +165,7 @@ export const rollup = propertySchema(
     z.object({
       function: z.string(),
       type: z.literal("date"),
-      date: z.string().datetime().nullable(),
+      date: z.string().datetime({ offset: true }).nullable(),
     }),
     z.object({
       function: z.string(),
