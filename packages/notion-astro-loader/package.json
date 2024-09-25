@@ -24,13 +24,13 @@
       "types": "./dist/schemas/page.d.ts"
     }
   },
-  "version": "0.1.1",
+  "version": "0.2.0",
   "license": "MIT",
   "engines": {
     "node": ">=18"
   },
   "peerDependencies": {
-    "astro": "^4.14.0"
+    "astro": "^4.14.0 || ^5.0.0"
   },
   "dependencies": {
     "@jsdevtools/rehype-toc": "^3.0.2",
