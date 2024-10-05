@@ -17,6 +17,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "rehype-shift-heading": "^2.0.0",
     "postcss": "^8.4.41",
     "unified": "^11.0.5"
   },

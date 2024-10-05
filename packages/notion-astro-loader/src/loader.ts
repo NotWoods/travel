@@ -1,8 +1,13 @@
 import { Client, isFullPage, iteratePaginatedAPI } from "@notionhq/client";
+import type { RehypePlugins } from "astro";
 import type { Loader } from "astro/loaders";
 import { propertiesSchemaForDatabase } from "./database-properties.js";
 import { richTextToPlainText } from "./format.js";
-import { renderNotionEntry } from "./render.js";
+import {
+  buildProcessor,
+  renderNotionEntry,
+  type RehypePlugin,
+} from "./render.js";
 import { notionPageSchema } from "./schemas/page.js";
 import type {
   ClientOptions,
@@ -18,7 +23,13 @@ export interface NotionLoaderOptions
     Pick<
       QueryDatabaseParameters,
       "database_id" | "filter_properties" | "sorts" | "filter" | "archived"
-    > {}
+    > {
+  /**
+   * Pass rehype plugins to customize how the Notion output HTML is processed.
+   * You can import and apply the plugin function (recommended), or pass the plugin name as a string.
+   */
+  rehypePlugins?: RehypePlugins;
+}
 
 /**
  * Notion loader for the Astro Content Layer API.
@@ -49,6 +60,7 @@ export function notionLoader({
   sorts,
   filter,
   archived,
+  rehypePlugins = [],
   ...clientOptions
 }: NotionLoaderOptions): Loader {
   const notionClient = new Client(clientOptions);
@@ -62,6 +74,24 @@ export function notionLoader({
     return `page ${page.id} (Name ${title ?? "unknown"})`;
   }
 
+  const resolvedRehypePlugins = Promise.all(
+    rehypePlugins.map(async (config) => {
+      let plugin: RehypePlugin | string;
+      let options: any;
+      if (Array.isArray(config)) {
+        [plugin, options] = config;
+      } else {
+        plugin = config;
+      }
+
+      if (typeof plugin === "string") {
+        plugin = (await import(plugin)).default as RehypePlugin;
+      }
+      return [plugin, options] as const;
+    }),
+  );
+  const processor = buildProcessor(resolvedRehypePlugins);
+
   return {
     name: "notion-loader",
     schema: async () =>
@@ -71,8 +101,9 @@ export function notionLoader({
           database_id,
         ),
       }),
-    async load({ store, logger, parseData }) {
+    async load({ store, logger, parseData, config }) {
       logger.info("Loading notion pages");
+      console.log("config", config.markdown);
 
       const existingPageIds = new Set<string>(store.keys());
       const renderPromises: Promise<void>[] = [];
@@ -108,7 +139,11 @@ export function notionLoader({
           });
 
           logger.debug(`Rendering ${pageNameForLogger(page)}`);
-          const renderPromise = renderNotionEntry(notionClient, page.id)
+          const renderPromise = renderNotionEntry(
+            notionClient,
+            processor,
+            page.id,
+          )
             .catch((error: unknown) => {
               const errorMessage =
                 error instanceof Error

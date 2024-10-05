@@ -14,20 +14,49 @@ import type { MarkdownHeading } from "astro";
 // #region Processor
 import notionRehype from "notion-rehype-k";
 import rehypeKatex from "rehype-katex";
-import rehypeShiftHeading from "rehype-shift-heading";
 import rehypeSlug from "rehype-slug";
 import rehypeStringify from "rehype-stringify";
-import { unified } from "unified";
+import { unified, type Plugin } from "unified";
 
-const processor = unified()
+const baseProcessor = unified()
   .use(notionRehype, {}) // Parse Notion blocks to rehype AST
-  .use(rehypeShiftHeading, { shift: 1 })
   .use(rehypeSlug)
   .use(
     // @ts-ignore
     rehypeKatex,
   ) // Then you can use any rehype plugins to enrich the AST
   .use(rehypeStringify); // Turn AST to HTML string
+
+export type RehypePlugin = Plugin<any[], any>;
+
+export function buildProcessor(
+  rehypePlugins: Promise<ReadonlyArray<readonly [RehypePlugin, any]>>,
+) {
+  let headings: MarkdownHeading[] = [];
+
+  const processorWithToc = baseProcessor().use(rehypeToc, {
+    customizeTOC(toc) {
+      headings = extractTocHeadings(toc);
+      return false;
+    },
+  });
+  const processorPromise = rehypePlugins.then((plugins) => {
+    let processor = processorWithToc;
+    for (const [plugin, options] of plugins) {
+      processor = processor.use(plugin, options);
+    }
+    return processor;
+  });
+
+  return async function process(blocks: unknown[]) {
+    const processor = await processorPromise;
+    const vFile = await processor.process({ data: blocks } as Record<
+      string,
+      unknown
+    >);
+    return { vFile, headings };
+  };
+}
 // #endregion
 
 async function awaitAll<T>(iterable: AsyncIterable<T>) {
@@ -123,20 +152,13 @@ export interface RenderedNotionEntry {
 
 export async function renderNotionEntry(
   client: Client,
+  process: ReturnType<typeof buildProcessor>,
   pageId: string,
 ): Promise<RenderedNotionEntry> {
   const imagePaths: string[] = [];
   const blocks = await awaitAll(listBlocks(client, pageId, imagePaths));
-  let headings: MarkdownHeading[] = [];
 
-  const vFile = await processor()
-    .use(rehypeToc, {
-      customizeTOC(toc) {
-        headings = extractTocHeadings(toc);
-        return false;
-      },
-    })
-    .process({ data: blocks } as Record<string, unknown>);
+  const { vFile, headings } = await process(blocks);
 
   return {
     html: vFile.toString(),

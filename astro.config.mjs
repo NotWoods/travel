@@ -17,4 +17,7 @@ export default defineConfig({
   experimental: {
     contentLayer: true,
   },
+  markdown: {
+    rehypePlugins: [],
+  },
 });
