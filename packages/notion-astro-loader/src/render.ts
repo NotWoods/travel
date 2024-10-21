@@ -5,9 +5,9 @@ import type {
 } from "@jsdevtools/rehype-toc";
 import { toc as rehypeToc } from "@jsdevtools/rehype-toc";
 import {
-  type Client,
-  iteratePaginatedAPI,
   isFullBlock,
+  iteratePaginatedAPI,
+  type Client,
 } from "@notionhq/client";
 import type { MarkdownHeading } from "astro";
 
@@ -17,6 +17,7 @@ import rehypeKatex from "rehype-katex";
 import rehypeSlug from "rehype-slug";
 import rehypeStringify from "rehype-stringify";
 import { unified, type Plugin } from "unified";
+import { imageURLToBase64 } from "./utils.js";
 
 const baseProcessor = unified()
   .use(notionRehype, {}) // Parse Notion blocks to rehype AST
@@ -154,9 +155,24 @@ export async function renderNotionEntry(
   client: Client,
   process: ReturnType<typeof buildProcessor>,
   pageId: string,
+  saveImagesAsStrings?: boolean,
 ): Promise<RenderedNotionEntry> {
   const imagePaths: string[] = [];
   const blocks = await awaitAll(listBlocks(client, pageId, imagePaths));
+  if (saveImagesAsStrings) {
+    await Promise.all(
+      blocks.map(async (block) => {
+        if (block.type !== "image" || block.image.type !== "file") return;
+        const url = block.image.file;
+        if (!url) return;
+        imagePaths.push(url);
+        block.image = {
+          type: block.image.type,
+          [block.image.type]: await imageURLToBase64(url),
+        };
+      }),
+    );
+  }
 
   const { vFile, headings } = await process(blocks);
 

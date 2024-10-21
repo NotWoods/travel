@@ -14,6 +14,7 @@ import type {
   PageObjectResponse,
   QueryDatabaseParameters,
 } from "./types.js";
+import { imageURLToBase64 } from "./utils.js";
 
 export interface NotionLoaderOptions
   extends Pick<
@@ -29,6 +30,7 @@ export interface NotionLoaderOptions
    * You can import and apply the plugin function (recommended), or pass the plugin name as a string.
    */
   rehypePlugins?: RehypePlugins;
+  saveImagesAsStrings?: boolean;
 }
 
 /**
@@ -55,6 +57,7 @@ export interface NotionLoaderOptions
  * });
  */
 export function notionLoader({
+  saveImagesAsStrings = false,
   database_id,
   filter_properties,
   sorts,
@@ -143,6 +146,7 @@ export function notionLoader({
             notionClient,
             processor,
             page.id,
+            saveImagesAsStrings,
           )
             .catch((error: unknown) => {
               const errorMessage =
@@ -158,9 +162,47 @@ export function notionLoader({
 
               return undefined;
             })
-            .then((rendered) => {
+            .then(async (rendered) => {
               if (rendered !== undefined) {
                 logger.debug(`Rendered ${pageNameForLogger(page)}`);
+              }
+              if (saveImagesAsStrings) {
+                const properties = data.properties;
+                if (properties) {
+                  await Promise.all(
+                    Object.keys(properties).map(async (key) => {
+                      if (properties[key]?.type === "files") {
+                        const propertyFiles = properties[key].files;
+
+                        await Promise.all(
+                          propertyFiles.map(async (file, index) => {
+                            let url =
+                              file.type === "file"
+                                ? file.file.url
+                                : file.type === "external"
+                                  ? file.external.url
+                                  : undefined;
+                            if (url) {
+                              // workaround notion poor typing
+                              if (
+                                key in properties &&
+                                properties[key] &&
+                                "files" in properties[key] &&
+                                properties[key].files &&
+                                properties[key].files[index] &&
+                                "file" in properties[key].files[index] &&
+                                properties[key].files[index].file
+                              ) {
+                                properties[key].files[index].file.url =
+                                  await imageURLToBase64(url);
+                              }
+                            }
+                          }),
+                        );
+                      }
+                    }),
+                  );
+                }
               }
               store.set({
                 id: page.id,
