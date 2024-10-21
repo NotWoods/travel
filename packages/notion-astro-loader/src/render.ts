@@ -161,9 +161,8 @@ export async function renderNotionEntry(
   if (saveImagesAsStrings) {
     await Promise.all(
       blocks.map(async (block, index) => {
-        if (!block) return;
-        if (block.type !== "image") return;
-        if (block.image.type !== "file") return;
+        if (!block || block.type !== "image" || block.image.type !== "file")
+          return;
         const url = block.image.file;
         if (!url) return;
         const response = await fetch(url);
