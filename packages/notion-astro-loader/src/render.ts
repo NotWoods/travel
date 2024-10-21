@@ -154,24 +154,31 @@ export async function renderNotionEntry(
   client: Client,
   process: ReturnType<typeof buildProcessor>,
   pageId: string,
-  _saveImagesAsStrings?: boolean,
+  saveImagesAsStrings?: boolean,
 ): Promise<RenderedNotionEntry> {
   const imagePaths: string[] = [];
   const blocks = await awaitAll(listBlocks(client, pageId, imagePaths));
-  //   if (saveImagesAsStrings) {
-  //     await Promise.all(
-  //       blocks.map(async (block) => {
-  //         if (block.type !== "image" || block.image.type !== "file") return;
-  //         const url = block.image.file;
-  //         if (!url) return;
-  //         imagePaths.push(url);
-  //         block.image = {
-  //           type: block.image.type,
-  //           [block.image.type]: await imageURLToBase64(url),
-  //         };
-  //       }),
-  //     );
-  //   }
+  if (saveImagesAsStrings) {
+    for (let i = 0; i < blocks.length; i++) {
+      const block = blocks[i];
+      if (!block) continue;
+      if (block.type !== "image") continue;
+      if (block.image.type !== "file") continue;
+      const url = block.image.file;
+      if (!url) continue;
+      const response = await fetch(url);
+      const buffer = await response.arrayBuffer();
+      const base64 = Buffer.from(buffer).toString("base64");
+      const mimeType = response.headers.get("content-type");
+      blocks[i] = {
+        ...block,
+        image: {
+          type: block.image.type,
+          [block.image.type]: `data:${mimeType};base64,${base64}`,
+        },
+      };
+    }
+  }
 
   const { vFile, headings } = await process(blocks);
 

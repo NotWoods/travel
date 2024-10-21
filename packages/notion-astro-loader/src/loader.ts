@@ -173,7 +173,6 @@ export function notionLoader({
                     Object.keys(properties).map(async (key) => {
                       if (properties[key]?.type === "files") {
                         const propertyFiles = properties[key].files;
-
                         await Promise.all(
                           propertyFiles.map(async (file, index) => {
                             let url =
