@@ -17,6 +17,7 @@ import rehypeKatex from "rehype-katex";
 import rehypeSlug from "rehype-slug";
 import rehypeStringify from "rehype-stringify";
 import { unified, type Plugin } from "unified";
+import { saveImageBlocksAsStrings } from "./utils.js";
 
 const baseProcessor = unified()
   .use(notionRehype, {}) // Parse Notion blocks to rehype AST
@@ -59,7 +60,7 @@ export function buildProcessor(
 }
 // #endregion
 
-async function awaitAll<T>(iterable: AsyncIterable<T>) {
+export async function awaitAll<T>(iterable: AsyncIterable<T>) {
   const result: T[] = [];
   for await (const item of iterable) {
     result.push(item);
@@ -72,7 +73,7 @@ async function awaitAll<T>(iterable: AsyncIterable<T>) {
  * @param blockId ID of block to get chidren for.
  * @param imagePaths MUTATED. This function will push image paths to this array.
  */
-async function* listBlocks(
+export async function* listBlocks(
   client: Client,
   blockId: string,
   imagePaths: string[],
@@ -157,27 +158,13 @@ export async function renderNotionEntry(
   saveImagesAsStrings?: boolean,
 ): Promise<RenderedNotionEntry> {
   const imagePaths: string[] = [];
-  const blocks = await awaitAll(listBlocks(client, pageId, imagePaths));
+  let blocks;
   if (saveImagesAsStrings) {
-    await Promise.all(
-      blocks.map(async (block, index) => {
-        if (!block || block.type !== "image" || block.image.type !== "file")
-          return;
-        const url = block.image.file;
-        if (!url) return;
-        const response = await fetch(url);
-        const buffer = await response.arrayBuffer();
-        const base64 = Buffer.from(buffer).toString("base64");
-        const mimeType = response.headers.get("content-type");
-        blocks[index] = {
-          ...block,
-          image: {
-            type: block.image.type,
-            [block.image.type]: `data:${mimeType};base64,${base64}`,
-          },
-        };
-      }),
+    blocks = await saveImageBlocksAsStrings(
+      listBlocks(client, pageId, imagePaths),
     );
+  } else {
+    blocks = await awaitAll(listBlocks(client, pageId, imagePaths));
   }
 
   const { vFile, headings } = await process(blocks);

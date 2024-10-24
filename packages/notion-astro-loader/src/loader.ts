@@ -14,7 +14,7 @@ import type {
   PageObjectResponse,
   QueryDatabaseParameters,
 } from "./types.js";
-import { handleFilesProperties } from "./utils.js";
+import { saveImageFilesAsString } from "./utils.js";
 
 export interface NotionLoaderOptions
   extends Pick<
@@ -167,7 +167,7 @@ export function notionLoader({
                 logger.debug(`Rendered ${pageNameForLogger(page)}`);
               }
               if (saveImagesAsStrings) {
-                await handleFilesProperties(data);
+                await saveImageFilesAsString(data);
               }
               store.set({
                 id: page.id,

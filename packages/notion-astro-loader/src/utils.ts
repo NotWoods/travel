@@ -1,3 +1,4 @@
+import { awaitAll, listBlocks } from "./render.js";
 import type { PageProperty } from "./types.js";
 
 export const imageURLToBase64 = async (url: string): Promise<string> => {
@@ -8,7 +9,7 @@ export const imageURLToBase64 = async (url: string): Promise<string> => {
   return `data:${mimeType};base64,${base64}`;
 };
 
-export const handleFilesProperties = async (data: {
+export const saveImageFilesAsString = async (data: {
   properties: Record<string, PageProperty>;
 }) => {
   const properties = data.properties;
@@ -46,4 +47,29 @@ export const handleFilesProperties = async (data: {
       }),
     );
   }
+};
+
+type Blocks = Awaited<ReturnType<typeof listBlocks>>;
+export const saveImageBlocksAsStrings = async (blocks: Blocks) => {
+  const blocksArray = await awaitAll(blocks);
+  await Promise.all(
+    blocksArray.map(async (block: any, index: number) => {
+      if (!block || block.type !== "image" || block.image.type !== "file")
+        return;
+      const url = block.image.file.url;
+      if (!url) return;
+      const response = await fetch(url);
+      const buffer = await response.arrayBuffer();
+      const base64 = Buffer.from(buffer).toString("base64");
+      const mimeType = response.headers.get("content-type");
+      blocksArray[index] = {
+        ...block,
+        image: {
+          type: block.image.type,
+          [block.image.type]: `data:${mimeType};base64,${base64}`,
+        },
+      };
+    }),
+  );
+  return blocksArray;
 };
