@@ -50,7 +50,7 @@ export const handleImageFileProperty = async (data: {
 };
 
 type Blocks = Awaited<ReturnType<typeof listBlocks>>;
-export const saveImageBlocksAsStrings = async (blocks: Blocks) => {
+export const handleImageBlocks = async (blocks: Blocks) => {
   const blocksArray = await awaitAll(blocks);
   await Promise.all(
     blocksArray.map(async (block: any, index: number) => {
