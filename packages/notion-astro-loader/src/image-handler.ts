@@ -9,7 +9,7 @@ export const imageURLToBase64 = async (url: string): Promise<string> => {
   return `data:${mimeType};base64,${base64}`;
 };
 
-export const saveImageFilesAsString = async (data: {
+export const handleImageFileProperty = async (data: {
   properties: Record<string, PageProperty>;
 }) => {
   const properties = data.properties;
