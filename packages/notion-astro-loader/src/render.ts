@@ -17,7 +17,7 @@ import rehypeKatex from "rehype-katex";
 import rehypeSlug from "rehype-slug";
 import rehypeStringify from "rehype-stringify";
 import { unified, type Plugin } from "unified";
-import { saveImageBlocksAsStrings } from "./utils.js";
+import { handleImageBlocks } from "./image-handler.js";
 
 const baseProcessor = unified()
   .use(notionRehype, {}) // Parse Notion blocks to rehype AST
@@ -160,9 +160,7 @@ export async function renderNotionEntry(
   const imagePaths: string[] = [];
   let blocks;
   if (saveImagesAsStrings) {
-    blocks = await saveImageBlocksAsStrings(
-      listBlocks(client, pageId, imagePaths),
-    );
+    blocks = await handleImageBlocks(listBlocks(client, pageId, imagePaths));
   } else {
     blocks = await awaitAll(listBlocks(client, pageId, imagePaths));
   }

@@ -3,6 +3,7 @@ import type { RehypePlugins } from "astro";
 import type { Loader } from "astro/loaders";
 import { propertiesSchemaForDatabase } from "./database-properties.js";
 import { richTextToPlainText } from "./format.js";
+import { handleImageFileProperty } from "./image-handler.js";
 import {
   buildProcessor,
   renderNotionEntry,
@@ -14,7 +15,6 @@ import type {
   PageObjectResponse,
   QueryDatabaseParameters,
 } from "./types.js";
-import { saveImageFilesAsString } from "./utils.js";
 
 export interface NotionLoaderOptions
   extends Pick<
@@ -167,7 +167,7 @@ export function notionLoader({
                 logger.debug(`Rendered ${pageNameForLogger(page)}`);
               }
               if (saveImagesAsStrings) {
-                await saveImageFilesAsString(data);
+                await handleImageFileProperty(data);
               }
               store.set({
                 id: page.id,
