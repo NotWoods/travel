@@ -1,3 +1,7 @@
+import type { GetImageResult } from "astro";
+import { getImage } from "astro:assets";
+import type { FileObject } from "./types.js";
+
 /**
  * Extract a plain string from a list of rich text items.
  *
@@ -17,12 +21,9 @@ export function richTextToPlainText(
  *
  * @see https://developers.notion.com/reference/file-object
  */
-export function fileToUrl(
-  file:
-    | { type: "external"; external: { url: string } }
-    | { type: "file"; file: { url: string } }
-    | null,
-): string | undefined {
+export function fileToUrl(file: FileObject): string;
+export function fileToUrl(file: FileObject | null): string | undefined;
+export function fileToUrl(file: FileObject | null): string | undefined {
   switch (file?.type) {
     case "external":
       return file.external.url;
@@ -31,6 +32,19 @@ export function fileToUrl(
     default:
       return undefined;
   }
+}
+
+/**
+ * Extract and locally cache the image from a file object.
+ * @see https://developers.notion.com/reference/file-object
+ */
+export async function fileToImageAsset(
+  file: FileObject,
+): Promise<GetImageResult> {
+  return getImage({
+    src: fileToUrl(file),
+    inferSize: true,
+  });
 }
 
 /**

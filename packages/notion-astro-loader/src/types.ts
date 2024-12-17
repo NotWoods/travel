@@ -41,3 +41,7 @@ export type NotionPageData = Pick<
   | "public_url"
   | "properties"
 >;
+
+export type FileObject =
+  | { type: "external"; external: { url: string } }
+  | { type: "file"; file: { url: string } };
