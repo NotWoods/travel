@@ -113,7 +113,7 @@ export function notionLoader({
         if (existingPage?.digest !== page.last_edited_time) {
           const renderer = new NotionPageRenderer(notionClient, page, logger);
 
-          const data = await parseData(renderer.getPageData());
+          const data = await parseData(await renderer.getPageData());
           const renderPromise = renderer.render(processor).then((rendered) => {
             store.set({
               id: page.id,

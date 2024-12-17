@@ -51,6 +51,28 @@ export const collections = { database };
 
 You can then use these like any other content collection in Astro. The data is type-safe, and the types are automatically generated based on the schema of the Notion database.
 
+### Images
+
+Notion stores images in remote AWS buckets, and this loader will automatically try to process them using the [Astro Asset API](https://docs.astro.build/en/reference/modules/astro-assets/#getimage). To make this work, add the following to your [`astro.config.js` file](https://docs.astro.build/en/reference/configuration-reference/#imageremotepatterns):
+
+```js
+// astro.config.js
+import { defineConfig } from "astro/config";
+
+export default defineConfig({
+  image: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**.amazonaws.com",
+      },
+    ],
+  },
+});
+```
+
+Properties must be transformed manually as Notion doesn't disambiguate between images and other file types like PDF. Async transformers can be used to make this easier, using the `fileToImageAsset` formatter.
+
 ### Advanced Schema
 
 Helper Zod schemas are provided to let you customize and transform Notion page properties.
@@ -91,6 +113,7 @@ A few helper functions are provided for transforming Notion API objects into sim
 
 - `richTextToPlainText` converts [rich text](https://developers.notion.com/reference/rich-text) into plain strings
 - `fileToUrl` converts [file objects](https://developers.notion.com/reference/file-object) to a URL string.
+- `fileToImageAsset` converts [file objects](https://developers.notion.com/reference/file-object) to an image asset using the [Astro Asset API](https://docs.astro.build/en/reference/modules/astro-assets/#getimage).
 - `dateToDateObjects` converts the strings in a [date property](https://developers.notion.com/reference/page-property-values#date) into `Date`s.
 
 ## Options

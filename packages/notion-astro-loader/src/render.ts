@@ -12,8 +12,13 @@ import {
 import type { AstroIntegrationLogger, MarkdownHeading } from "astro";
 import type { ParseDataOptions } from "astro/loaders";
 
-import type { NotionPageData, PageObjectResponse } from "./types.js";
+import type {
+  FileObject,
+  NotionPageData,
+  PageObjectResponse,
+} from "./types.js";
 import * as transformedPropertySchema from "./schemas/transformed-properties.js";
+import { fileToImageAsset, fileToUrl } from "./format.js";
 
 // #region Processor
 import notionRehype from "notion-rehype-k";
@@ -74,12 +79,12 @@ async function awaitAll<T>(iterable: AsyncIterable<T>) {
 /**
  * Return a generator that yields all blocks in a Notion page, recursively.
  * @param blockId ID of block to get children for.
- * @param imagePaths MUTATED. This function will push image paths to this array.
+ * @param fetchImage Function that fetches an image and returns a local path.
  */
 async function* listBlocks(
   client: Client,
   blockId: string,
-  imagePaths: string[],
+  fetchImage: (file: FileObject) => Promise<string>,
 ) {
   for await (const block of iteratePaginatedAPI(client.blocks.children.list, {
     block_id: blockId,
@@ -89,27 +94,24 @@ async function* listBlocks(
     }
 
     if (block.has_children) {
-      const children = await awaitAll(listBlocks(client, block.id, imagePaths));
+      const children = await awaitAll(listBlocks(client, block.id, fetchImage));
       // @ts-ignore -- TODO: Make TypeScript happy here
       block[block.type].children = children;
     }
 
+    // Specialized handling for image blocks
     if (block.type === "image") {
-      let url: string;
-      switch (block.image.type) {
-        case "external":
-          url = block.image.external.url;
-          break;
-        case "file":
-          url = block.image.file.url;
-          break;
-      }
-      imagePaths.push(url);
+      // Fetch remote image and store it locally
+      const url = await fetchImage(block.image);
 
       // notion-rehype-k incorrectly expects "file" to be a string instead of an object
       yield {
         ...block,
-        image: { type: block.image.type, [block.image.type]: url },
+        image: {
+          type: block.image.type,
+          [block.image.type]: url,
+          caption: block.image.caption,
+        },
       };
     } else {
       yield block;
@@ -173,8 +175,13 @@ export class NotionPageRenderer {
       page.properties.Name,
     );
     this.#logger = parentLogger.fork(
-      `page ${page.id} (Name ${pageTitle ?? "unknown"})`,
+      `page ${page.id} (Name ${pageTitle.success ? pageTitle.data : "unknown"})`,
     );
+    if (!pageTitle.success) {
+      this.#logger.warn(
+        `Failed to parse property Name as title: ${pageTitle.error.toString()}`,
+      );
+    }
   }
 
   /**
@@ -207,7 +214,7 @@ export class NotionPageRenderer {
     this.#logger.debug("Rendering");
     try {
       const blocks = await awaitAll(
-        listBlocks(this.client, this.page.id, this.#imagePaths),
+        listBlocks(this.client, this.page.id, this.#fetchImage),
       );
 
       const { vFile, headings } = await process(blocks);
@@ -225,6 +232,28 @@ export class NotionPageRenderer {
       return undefined;
     }
   }
+
+  /**
+   * Helper function to convert remote Notion images into local images in Astro.
+   * Additionally saves the path in `this.#imagePaths`.
+   * @param imageFileObject Notion file object representing an image.
+   * @returns Local path to the image, or undefined if the image could not be fetched.
+   */
+  #fetchImage = async (imageFileObject: FileObject) => {
+    try {
+      const fetchedImageData = await fileToImageAsset(imageFileObject);
+      this.#imagePaths.push(fetchedImageData.src);
+      return fetchedImageData.src;
+    } catch (error) {
+      this.#logger.error(
+        `Failed to fetch image when rendering page.
+Have you added \`image: { remotePatterns: [{ protocol: "https", hostname: "*.amazonaws.com" }] }\` to your Astro config file?\n
+Error: ${getErrorMessage(error)}`,
+      );
+      // Fall back to using the remote URL directly.
+      return fileToUrl(imageFileObject);
+    }
+  };
 }
 
 function getErrorMessage(error: unknown): string {
