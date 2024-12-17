@@ -51,6 +51,26 @@ export const collections = { database };
 
 You can then use these like any other content collection in Astro. The data is type-safe, and the types are automatically generated based on the schema of the Notion database.
 
+### Images
+
+Notion stores images in remote AWS buckets, and this loader will automatically try to process them using the [Astro Asset API](https://docs.astro.build/en/reference/modules/astro-assets/#getimage). To make this work, add the following to your [`astro.config.js` file](https://docs.astro.build/en/reference/configuration-reference/#imageremotepatterns):
+
+```js
+// astro.config.js
+import { defineConfig } from "astro/config";
+
+export default defineConfig({
+  image: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**.amazonaws.com",
+      },
+    ],
+  },
+});
+```
+
 ### Advanced Schema
 
 Helper Zod schemas are provided to let you customize and transform Notion page properties.

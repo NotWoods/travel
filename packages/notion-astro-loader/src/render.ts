@@ -11,6 +11,7 @@ import {
 } from "@notionhq/client";
 import type { AstroIntegrationLogger, MarkdownHeading } from "astro";
 import type { ParseDataOptions } from "astro/loaders";
+import { getImage } from "astro:assets";
 
 import type { NotionPageData, PageObjectResponse } from "./types.js";
 import * as transformedPropertySchema from "./schemas/transformed-properties.js";
@@ -74,12 +75,12 @@ async function awaitAll<T>(iterable: AsyncIterable<T>) {
 /**
  * Return a generator that yields all blocks in a Notion page, recursively.
  * @param blockId ID of block to get children for.
- * @param imagePaths MUTATED. This function will push image paths to this array.
+ * @param fetchImage Function that fetches an image and returns a local path.
  */
 async function* listBlocks(
   client: Client,
   blockId: string,
-  imagePaths: string[],
+  fetchImage: (remoteUrl: string) => Promise<string | undefined>,
 ) {
   for await (const block of iteratePaginatedAPI(client.blocks.children.list, {
     block_id: blockId,
@@ -89,27 +90,33 @@ async function* listBlocks(
     }
 
     if (block.has_children) {
-      const children = await awaitAll(listBlocks(client, block.id, imagePaths));
+      const children = await awaitAll(listBlocks(client, block.id, fetchImage));
       // @ts-ignore -- TODO: Make TypeScript happy here
       block[block.type].children = children;
     }
 
+    // Specialized handling for image blocks
     if (block.type === "image") {
-      let url: string;
+      let remoteUrl: string;
       switch (block.image.type) {
         case "external":
-          url = block.image.external.url;
+          remoteUrl = block.image.external.url;
           break;
         case "file":
-          url = block.image.file.url;
+          remoteUrl = block.image.file.url;
           break;
       }
-      imagePaths.push(url);
+      // Fetch remote image and store it locally
+      const localUrl = (await fetchImage(remoteUrl)) ?? remoteUrl;
 
       // notion-rehype-k incorrectly expects "file" to be a string instead of an object
       yield {
         ...block,
-        image: { type: block.image.type, [block.image.type]: url },
+        image: {
+          type: block.image.type,
+          [block.image.type]: localUrl,
+          caption: block.image.caption,
+        },
       };
     } else {
       yield block;
@@ -207,7 +214,7 @@ export class NotionPageRenderer {
     this.#logger.debug("Rendering");
     try {
       const blocks = await awaitAll(
-        listBlocks(this.client, this.page.id, this.#imagePaths),
+        listBlocks(this.client, this.page.id, this.#fetchImage),
       );
 
       const { vFile, headings } = await process(blocks);
@@ -225,6 +232,29 @@ export class NotionPageRenderer {
       return undefined;
     }
   }
+
+  /**
+   * Helper function to convert remote Notion images into local images in Astro.
+   * Additionally saves the path in `this.#imagePaths`.
+   * @returns Local path to the image, or undefined if the image could not be fetched.
+   */
+  #fetchImage = async (remoteUrl: string) => {
+    try {
+      const fetchedImageData = await getImage({
+        src: remoteUrl,
+        inferSize: true,
+      });
+      this.#imagePaths.push(fetchedImageData.src);
+      return fetchedImageData.src;
+    } catch (error) {
+      this.#logger.error(
+        `Failed to fetch image when rendering page.
+Have you added \`image: { remotePatterns: [{ protocol: "https", hostname: "*.amazonaws.com" }] }\` to your Astro config file?\n
+Error: ${getErrorMessage(error)}`,
+      );
+      return undefined;
+    }
+  };
 }
 
 function getErrorMessage(error: unknown): string {
