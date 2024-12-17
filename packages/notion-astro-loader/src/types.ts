@@ -30,3 +30,14 @@ export type RichTextItemResponse = Extract<
   PageProperty,
   { type: "rich_text" }
 >["rich_text"][number];
+
+export type NotionPageData = Pick<
+  PageObjectResponse,
+  | "icon"
+  | "cover"
+  | "archived"
+  | "in_trash"
+  | "url"
+  | "public_url"
+  | "properties"
+>;

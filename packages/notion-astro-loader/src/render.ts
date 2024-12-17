@@ -9,7 +9,11 @@ import {
   iteratePaginatedAPI,
   isFullBlock,
 } from "@notionhq/client";
-import type { MarkdownHeading } from "astro";
+import type { AstroIntegrationLogger, MarkdownHeading } from "astro";
+import type { ParseDataOptions } from "astro/loaders";
+
+import type { NotionPageData, PageObjectResponse } from "./types.js";
+import * as transformedPropertySchema from "./schemas/transformed-properties.js";
 
 // #region Processor
 import notionRehype from "notion-rehype-k";
@@ -69,7 +73,7 @@ async function awaitAll<T>(iterable: AsyncIterable<T>) {
 
 /**
  * Return a generator that yields all blocks in a Notion page, recursively.
- * @param blockId ID of block to get chidren for.
+ * @param blockId ID of block to get children for.
  * @param imagePaths MUTATED. This function will push image paths to this array.
  */
 async function* listBlocks(
@@ -150,21 +154,85 @@ export interface RenderedNotionEntry {
   };
 }
 
-export async function renderNotionEntry(
-  client: Client,
-  process: ReturnType<typeof buildProcessor>,
-  pageId: string,
-): Promise<RenderedNotionEntry> {
-  const imagePaths: string[] = [];
-  const blocks = await awaitAll(listBlocks(client, pageId, imagePaths));
+export class NotionPageRenderer {
+  #imagePaths: string[] = [];
+  #logger: AstroIntegrationLogger;
 
-  const { vFile, headings } = await process(blocks);
+  /**
+   * @param client Notion API client.
+   * @param page Notion page object including page ID and properties. Does not include blocks.
+   * @param parentLogger Logger to use for logging messages.
+   */
+  constructor(
+    private readonly client: Client,
+    private readonly page: PageObjectResponse,
+    parentLogger: AstroIntegrationLogger,
+  ) {
+    // Create a sub-logger labelled with the page name
+    const pageTitle = transformedPropertySchema.title.safeParse(
+      page.properties.Name,
+    );
+    this.#logger = parentLogger.fork(
+      `page ${page.id} (Name ${pageTitle ?? "unknown"})`,
+    );
+  }
 
-  return {
-    html: vFile.toString(),
-    metadata: {
-      headings,
-      imagePaths,
-    },
-  };
+  /**
+   * Return page properties for Astro to use.
+   */
+  getPageData(): ParseDataOptions<NotionPageData> {
+    const { page } = this;
+    return {
+      id: page.id,
+      data: {
+        icon: page.icon,
+        cover: page.cover,
+        archived: page.archived,
+        in_trash: page.in_trash,
+        url: page.url,
+        public_url: page.public_url,
+        properties: page.properties,
+      },
+    };
+  }
+
+  /**
+   * Return rendered HTML for the page.
+   * @param process Processor function to transform Notion blocks into HTML.
+   * This is created once for all pages then shared.
+   */
+  async render(
+    process: ReturnType<typeof buildProcessor>,
+  ): Promise<RenderedNotionEntry | undefined> {
+    this.#logger.debug("Rendering");
+    try {
+      const blocks = await awaitAll(
+        listBlocks(this.client, this.page.id, this.#imagePaths),
+      );
+
+      const { vFile, headings } = await process(blocks);
+
+      this.#logger.debug("Rendered");
+      return {
+        html: vFile.toString(),
+        metadata: {
+          headings,
+          imagePaths: this.#imagePaths,
+        },
+      };
+    } catch (error) {
+      this.#logger.error(`Failed to render: ${getErrorMessage(error)}`);
+      return undefined;
+    }
+  }
+}
+
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  } else if (typeof error === "string") {
+    return error;
+  } else {
+    return "Unknown error";
+  }
 }

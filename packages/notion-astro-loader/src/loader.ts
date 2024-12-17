@@ -2,18 +2,13 @@ import { Client, isFullPage, iteratePaginatedAPI } from "@notionhq/client";
 import type { RehypePlugins } from "astro";
 import type { Loader } from "astro/loaders";
 import { propertiesSchemaForDatabase } from "./database-properties.js";
-import { richTextToPlainText } from "./format.js";
 import {
   buildProcessor,
-  renderNotionEntry,
+  NotionPageRenderer,
   type RehypePlugin,
 } from "./render.js";
 import { notionPageSchema } from "./schemas/page.js";
-import type {
-  ClientOptions,
-  PageObjectResponse,
-  QueryDatabaseParameters,
-} from "./types.js";
+import type { ClientOptions, QueryDatabaseParameters } from "./types.js";
 
 export interface NotionLoaderOptions
   extends Pick<
@@ -65,15 +60,6 @@ export function notionLoader({
 }: NotionLoaderOptions): Loader {
   const notionClient = new Client(clientOptions);
 
-  function pageNameForLogger(page: PageObjectResponse): string {
-    const title =
-      page.properties.Name && "title" in page.properties.Name
-        ? richTextToPlainText(page.properties.Name.title)
-        : undefined;
-
-    return `page ${page.id} (Name ${title ?? "unknown"})`;
-  }
-
   const resolvedRehypePlugins = Promise.all(
     rehypePlugins.map(async (config) => {
       let plugin: RehypePlugin | string;
@@ -85,7 +71,8 @@ export function notionLoader({
       }
 
       if (typeof plugin === "string") {
-        plugin = (await import(plugin)).default as RehypePlugin;
+        plugin = (await import(/* @vite-ignore */ plugin))
+          .default as RehypePlugin;
       }
       return [plugin, options] as const;
     }),
@@ -101,9 +88,8 @@ export function notionLoader({
           database_id,
         ),
       }),
-    async load({ store, logger, parseData, config }) {
+    async load({ store, logger, parseData }) {
       logger.info("Loading notion pages");
-      console.log("config", config.markdown);
 
       const existingPageIds = new Set<string>(store.keys());
       const renderPromises: Promise<void>[] = [];
@@ -125,50 +111,17 @@ export function notionLoader({
 
         // If the page has been updated, re-render it
         if (existingPage?.digest !== page.last_edited_time) {
-          const data = await parseData({
-            id: page.id,
-            data: {
-              icon: page.icon,
-              cover: page.cover,
-              archived: page.archived,
-              in_trash: page.in_trash,
-              url: page.url,
-              public_url: page.public_url,
-              properties: page.properties,
-            },
-          });
+          const renderer = new NotionPageRenderer(notionClient, page, logger);
 
-          logger.debug(`Rendering ${pageNameForLogger(page)}`);
-          const renderPromise = renderNotionEntry(
-            notionClient,
-            processor,
-            page.id,
-          )
-            .catch((error: unknown) => {
-              const errorMessage =
-                error instanceof Error
-                  ? error.message
-                  : typeof error === "string"
-                    ? error
-                    : "Unknown error";
-              logger.error(
-                `Failed to render ${pageNameForLogger(page)}: ${errorMessage}`,
-              );
-              console.error(error);
-
-              return undefined;
-            })
-            .then((rendered) => {
-              if (rendered !== undefined) {
-                logger.debug(`Rendered ${pageNameForLogger(page)}`);
-              }
-              store.set({
-                id: page.id,
-                digest: page.last_edited_time,
-                data,
-                rendered,
-              });
+          const data = await parseData(renderer.getPageData());
+          const renderPromise = renderer.render(processor).then((rendered) => {
+            store.set({
+              id: page.id,
+              digest: page.last_edited_time,
+              data,
+              rendered,
             });
+          });
 
           renderPromises.push(renderPromise);
         }
