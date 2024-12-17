@@ -1,6 +1,6 @@
 {
   "name": "notion-astro-loader",
-  "description": "Notion loader for the experimental Astro Content Layer API. It allows you to load pages from a Notion database then render them as pages in a collection.",
+  "description": "Notion loader for the Astro Content Layer API. It allows you to load pages from a Notion database then render them as pages in a collection.",
   "type": "module",
   "exports": {
     ".": {
@@ -24,7 +24,7 @@
       "types": "./dist/schemas/page.d.ts"
     }
   },
-  "version": "0.3.0",
+  "version": "0.4.0",
   "license": "MIT",
   "engines": {
     "node": ">=18"
